@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import cookieParser from "cookie-parser";
 import cors from 'cors'
 import dns from 'dns'
+import productRoutes from "./routes/product.routes.js";
 
 import customerRoutes from "./routes/customer.routes.js";
 
@@ -11,6 +12,11 @@ dotenv.config()
 const app = express()
 
 const port = 8082
+const allowedOrigins = [
+    process.env.CLIENT_ORIGIN,
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+].filter(Boolean);
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
@@ -23,7 +29,7 @@ mongoose.connect(process.env.dbURL, {
 })
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -36,7 +42,7 @@ app.use(cookieParser())
 
 
 app.use('/customers', customerRoutes)
-
+app.use("/products", productRoutes);
 
 
 
