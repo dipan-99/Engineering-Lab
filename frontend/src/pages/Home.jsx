@@ -36,11 +36,11 @@ function Home() {
 
     const initials = customer?.fullName
         ? customer.fullName
-              .split(' ')
-              .map((n) => n[0])
-              .join('')
-              .toUpperCase()
-              .slice(0, 2)
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2)
         : 'SK';
 
     return (
@@ -143,9 +143,14 @@ function Home() {
                         <div className="rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
                             <h3 className="text-lg font-bold text-slate-900 mb-4">Quick Shortcuts</h3>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                <button className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-center transition hover:bg-indigo-50/60 hover:border-indigo-100">
+                                <button
+                                    onClick={() => navigate('/products')}
+                                    className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-center transition hover:bg-indigo-50/60 hover:border-indigo-100 cursor-pointer"
+                                >
                                     <span className="text-2xl mb-2">🛍️</span>
-                                    <span className="text-sm font-semibold text-slate-800">Browse Store</span>
+                                    <span className="text-sm font-semibold text-slate-800">
+                                        Browse Store
+                                    </span>
                                 </button>
                                 <button className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-center transition hover:bg-indigo-50/60 hover:border-indigo-100">
                                     <span className="text-2xl mb-2">📍</span>
