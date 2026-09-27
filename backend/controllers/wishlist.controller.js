@@ -88,3 +88,55 @@ export const getWishlist = async (req, res) => {
         });
     }
 };
+
+export const removeFromWishlist = async (req, res) => {
+    try {
+        const { productId } = req.params;
+
+        // 1. Validate product ID
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({
+                message: "Invalid product ID"
+            });
+        }
+
+        // 2. Find authenticated customer
+        const customer = await Customer.findById(req.user._id);
+
+        if (!customer) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        // 3. Check if product exists in wishlist
+        const wishlistIndex = customer.wishlist.findIndex(
+            (id) => id.toString() === productId
+        );
+
+        if (wishlistIndex === -1) {
+            return res.status(404).json({
+                message: "Product not found in wishlist"
+            });
+        }
+
+        // 4. Remove product from wishlist
+        customer.wishlist.splice(wishlistIndex, 1);
+
+        // 5. Save customer
+        await customer.save();
+
+        // 6. Return success
+        return res.status(200).json({
+            success: true,
+            message: "Product removed from wishlist"
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+};
