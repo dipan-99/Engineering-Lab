@@ -37,6 +37,20 @@ function Navbar({ customer }) {
                 </div>
 
                 <div className="flex items-center gap-3 sm:gap-4">
+                    <button
+                        onClick={() => navigate('/products')}
+                        className="hidden sm:inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer"
+                    >
+                        🛍️ Products
+                    </button>
+
+                    <button
+                        onClick={() => navigate('/wishlist')}
+                        className="hidden sm:inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-pink-50 hover:text-pink-600 cursor-pointer"
+                    >
+                        ❤️ Wishlist
+                    </button>
+                    
                     {customer?.fullName && (
                         <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-slate-50 py-1.5 pl-2 pr-3.5 shadow-sm">
                             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
