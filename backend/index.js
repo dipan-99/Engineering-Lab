@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import dotenv from 'dotenv'
 import cookieParser from "cookie-parser";
 import cors from 'cors'
-import dns from 'dns'
 import productRoutes from "./routes/product.routes.js";
 
 import customerRoutes from "./routes/customer.routes.js";
@@ -17,8 +16,6 @@ const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173"
 ].filter(Boolean);
-
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 mongoose.connect(process.env.dbURL, {
     tlsAllowInvalidCertificates: true
