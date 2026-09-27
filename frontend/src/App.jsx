@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
+import Wishlist from "./pages/Wishlist";
 
 function App() {
     return (
@@ -48,6 +49,8 @@ function App() {
                     path="/products/:id"
                     element={<ProductDetails />}
                 />
+
+                <Route path="/wishlist" element={<Wishlist />} />
 
             </Routes>
 

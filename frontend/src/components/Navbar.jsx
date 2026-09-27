@@ -15,11 +15,11 @@ function Navbar({ customer }) {
 
     const initials = customer?.fullName
         ? customer.fullName
-              .split(' ')
-              .map((n) => n[0])
-              .join('')
-              .toUpperCase()
-              .slice(0, 2)
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2)
         : 'SK';
 
     return (
