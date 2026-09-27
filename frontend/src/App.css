@@ -140,3 +140,32 @@
 .add-to-cart:hover {
     opacity: 0.85;
 }
+
+.wishlist-button {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #222;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.wishlist-button:hover {
+    background: #f5f5f5;
+}
+
+.wishlist-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.wishlist-message {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}

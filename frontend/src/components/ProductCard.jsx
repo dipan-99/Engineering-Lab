@@ -1,6 +1,30 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import api from "../services/api";
 
 function ProductCard({ product }) {
+    const [saving, setSaving] = useState(false);
+    const [message, setMessage] = useState("");
+
+    const handleAddToWishlist = async () => {
+        try {
+            setSaving(true);
+            setMessage("");
+
+            await api.post(`/wishlist/${product._id}`);
+
+            setMessage("♥ Added to Wishlist");
+
+        } catch (error) {
+            setMessage(
+                error.response?.data?.message ||
+                "Unable to save product. Please try again."
+            );
+        } finally {
+            setSaving(false);
+        }
+    };
+
     return (
         <div className="product-card">
             <img
@@ -26,6 +50,20 @@ function ProductCard({ product }) {
                 >
                     View Details
                 </Link>
+
+                <button
+                    className="wishlist-button"
+                    onClick={handleAddToWishlist}
+                    disabled={saving}
+                >
+                    {saving ? "⏳ Saving..." : "♡ Add to Wishlist"}
+                </button>
+
+                {message && (
+                    <p className="wishlist-message">
+                        {message}
+                    </p>
+                )}
             </div>
         </div>
     );
