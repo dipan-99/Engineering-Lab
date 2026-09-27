@@ -2,19 +2,28 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 
-function ProductCard({ product }) {
+function ProductCard({
+    product,
+    isWishlisted,
+    onWishlistChange
+}) {
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
 
     const handleAddToWishlist = async () => {
+        if (isWishlisted || saving) {
+            return;
+        }
+
         try {
             setSaving(true);
             setMessage("");
 
             await api.post(`/wishlist/${product._id}`);
 
-            setMessage("♥ Added to Wishlist");
+            onWishlistChange(product._id);
 
+            setMessage("♥ Added to Wishlist");
         } catch (error) {
             setMessage(
                 error.response?.data?.message ||
@@ -54,12 +63,16 @@ function ProductCard({ product }) {
                 <button
                     className="wishlist-button"
                     onClick={handleAddToWishlist}
-                    disabled={saving}
+                    disabled={saving || isWishlisted}
                 >
-                    {saving ? "⏳ Saving..." : "♡ Add to Wishlist"}
+                    {isWishlisted
+                        ? "♥ Already in Wishlist"
+                        : saving
+                            ? "⏳ Saving..."
+                            : "♡ Add to Wishlist"}
                 </button>
 
-                {message && (
+                {message && !isWishlisted && (
                     <p className="wishlist-message">
                         {message}
                     </p>
