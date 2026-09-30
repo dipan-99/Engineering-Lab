@@ -45,7 +45,6 @@ function Home() {
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900">
-            <Navbar customer={customer} />
 
             <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                 <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 p-8 sm:p-12 text-white shadow-xl shadow-indigo-500/10 mb-8">
