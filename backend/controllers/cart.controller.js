@@ -194,3 +194,55 @@ export const updateCartQuantity = async (req, res) => {
         });
     }
 };
+
+export const removeFromCart = async (req, res) => {
+    try {
+        const { productId } = req.params;
+
+        // 1. Validate product ID
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({
+                message: "Invalid product ID"
+            });
+        }
+
+        // 2. Find customer
+        const customer = await Customer.findById(req.user._id);
+
+        if (!customer) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        // 3. Find cart item
+        const cartItemIndex = customer.cart.findIndex(
+            (item) => item.product.toString() === productId
+        );
+
+        if (cartItemIndex === -1) {
+            return res.status(404).json({
+                message: "Product not found in cart"
+            });
+        }
+
+        // 4. Remove cart item
+        customer.cart.splice(cartItemIndex, 1);
+
+        // 5. Save
+        await customer.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Product removed from cart",
+            cart: customer.cart
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+};
