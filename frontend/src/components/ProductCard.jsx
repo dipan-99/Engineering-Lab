@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import { useCart } from "../context/CartContext";
 
 function ProductCard({
     product,
@@ -10,11 +11,12 @@ function ProductCard({
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
 
-    const handleAddToWishlist = async () => {
-        if (isWishlisted || saving) {
-            return;
-        }
+    const [addingToCart, setAddingToCart] = useState(false);
+    const [cartMessage, setCartMessage] = useState("");
 
+    const { addToCart } = useCart();
+
+    const handleAddToWishlist = async () => {
         try {
             setSaving(true);
             setMessage("");
@@ -24,6 +26,7 @@ function ProductCard({
             onWishlistChange(product._id);
 
             setMessage("♥ Added to Wishlist");
+
         } catch (error) {
             setMessage(
                 error.response?.data?.message ||
@@ -31,6 +34,25 @@ function ProductCard({
             );
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleAddToCart = async () => {
+        try {
+            setAddingToCart(true);
+            setCartMessage("");
+
+            await addToCart(product._id);
+
+            setCartMessage("✓ Added to Cart");
+
+        } catch (error) {
+            setCartMessage(
+                error.response?.data?.message ||
+                "Unable to add product to cart."
+            );
+        } finally {
+            setAddingToCart(false);
         }
     };
 
@@ -60,6 +82,7 @@ function ProductCard({
                     View Details
                 </Link>
 
+                {/* Wishlist */}
                 <button
                     className="wishlist-button"
                     onClick={handleAddToWishlist}
@@ -69,12 +92,33 @@ function ProductCard({
                         ? "♥ Already in Wishlist"
                         : saving
                             ? "⏳ Saving..."
-                            : "♡ Add to Wishlist"}
+                            : "♡ Add to Wishlist"
+                    }
                 </button>
 
                 {message && !isWishlisted && (
                     <p className="wishlist-message">
                         {message}
+                    </p>
+                )}
+
+                {/* Cart */}
+                <button
+                    className="cart-button"
+                    onClick={handleAddToCart}
+                    disabled={addingToCart || product.stock === 0}
+                >
+                    {product.stock === 0
+                        ? "Out of Stock"
+                        : addingToCart
+                            ? "⏳ Adding..."
+                            : "🛒 Add to Cart"
+                    }
+                </button>
+
+                {cartMessage && (
+                    <p className="cart-message">
+                        {cartMessage}
                     </p>
                 )}
             </div>

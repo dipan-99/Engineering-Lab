@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
+import { useCart } from "../context/CartContext";
 import api from '../services/api';
 
 function Navbar({ customer }) {
     const navigate = useNavigate();
+    const { cartCount } = useCart();
 
     const handleLogout = async () => {
         try {
@@ -50,7 +52,14 @@ function Navbar({ customer }) {
                     >
                         ❤️ Wishlist
                     </button>
-                    
+
+                    <button
+                        onClick={() => navigate('/cart')}
+                        className="hidden sm:inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-green-50 hover:text-green-600 cursor-pointer"
+                    >
+                        🛒 Cart ({cartCount})
+                    </button>
+
                     {customer?.fullName && (
                         <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-slate-50 py-1.5 pl-2 pr-3.5 shadow-sm">
                             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
