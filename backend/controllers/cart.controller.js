@@ -86,3 +86,31 @@ export const addToCart = async (req, res) => {
         });
     }
 };
+
+export const getCart = async (req, res) => {
+    try {
+        const customer = await Customer.findById(req.user._id)
+            .populate({
+                path: "cart.product",
+                select: "name description price category image stock"
+            });
+
+        if (!customer) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            cart: customer.cart
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+};
