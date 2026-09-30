@@ -74,7 +74,7 @@ export const loginCustomer = async (req, res) => {
             success: true,
             message: "Login successful"
         });ko
-    } catch (error) {ko
+    } catch (error) {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 };
