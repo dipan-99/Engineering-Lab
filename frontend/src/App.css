@@ -267,6 +267,7 @@
     color: white;
     text-decoration: none;
     cursor: pointer;
+    margin-top: 30px;
 }
 
 .browse-products-button:hover {
