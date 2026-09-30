@@ -9,6 +9,7 @@ function Products() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [wishlistIds, setWishlistIds] = useState(new Set());
+    const [priceRange, setPriceRange] = useState("");
 
     // Fetch wishlist once when page opens
     useEffect(() => {
@@ -48,6 +49,18 @@ function Products() {
                     params.category = category;
                 }
 
+                if (priceRange) {
+                    const [min, max] = priceRange.split("-");
+
+                    if (min) {
+                        params.minPrice = min;
+                    }
+
+                    if (max) {
+                        params.maxPrice = max;
+                    }
+                }
+
                 const response = await api.get("/products", {
                     params
                 });
@@ -68,7 +81,7 @@ function Products() {
         }, 400);
 
         return () => clearTimeout(timer);
-    }, [search, category]);
+    }, [search, category, priceRange]);
 
     const handleWishlistChange = (productId) => {
         setWishlistIds((currentIds) => {
@@ -100,6 +113,18 @@ function Products() {
                     <option value="Electronics">Electronics</option>
                     <option value="Clothing">Clothing</option>
                     <option value="Books">Books</option>
+                </select>
+
+                <select
+                    value={priceRange}
+                    onChange={(e) => setPriceRange(e.target.value)}
+                >
+                    <option value="">All Prices</option>
+                    <option value="0-1000">Under ₹1,000</option>
+                    <option value="1000-5000">₹1,000 - ₹5,000</option>
+                    <option value="5000-10000">₹5,000 - ₹10,000</option>
+                    <option value="10000-20000">₹10,000 - ₹20,000</option>
+                    <option value="20000-">Above ₹20,000</option>
                 </select>
             </div>
 
