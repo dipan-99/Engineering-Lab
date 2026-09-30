@@ -1,2 +1,6 @@
+# Modules And Floders
 \node_modules
+
+# Files
 \.env
+Credentials.json
