@@ -114,3 +114,83 @@ export const getCart = async (req, res) => {
         });
     }
 };
+
+export const updateCartQuantity = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const { quantity } = req.body;
+
+        // 1. Validate product ID
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({
+                message: "Invalid product ID"
+            });
+        }
+
+        // 2. Validate quantity
+        if (
+            typeof quantity !== "number" ||
+            !Number.isInteger(quantity) ||
+            quantity < 1
+        ) {
+            return res.status(400).json({
+                message: "Quantity must be an integer greater than or equal to 1"
+            });
+        }
+
+        // 3. Find product
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found"
+            });
+        }
+
+        // 4. Check stock
+        if (quantity > product.stock) {
+            return res.status(400).json({
+                message: "Requested quantity exceeds available stock"
+            });
+        }
+
+        // 5. Find customer
+        const customer = await Customer.findById(req.user._id);
+
+        if (!customer) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        // 6. Find cart item
+        const cartItem = customer.cart.find(
+            (item) => item.product.toString() === productId
+        );
+
+        if (!cartItem) {
+            return res.status(404).json({
+                message: "Product not found in cart"
+            });
+        }
+
+        // 7. Update quantity
+        cartItem.quantity = quantity;
+
+        // 8. Save
+        await customer.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Cart quantity updated",
+            cart: customer.cart
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+};
