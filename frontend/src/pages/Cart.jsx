@@ -78,11 +78,12 @@ function Cart() {
     };
 
     const handleDecrease = async (item) => {
-        if (item.quantity <= 1) {
-            return;
-        }
-
         try {
+            if (item.quantity === 1) {
+                await removeFromCart(item.product._id);
+                return;
+            }
+
             await updateQuantity(
                 item.product._id,
                 item.quantity - 1
@@ -140,7 +141,6 @@ function Cart() {
                                         onClick={() =>
                                             handleDecrease(item)
                                         }
-                                        disabled={item.quantity <= 1}
                                     >
                                         −
                                     </button>
