@@ -1,9 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from "../context/CartContext";
 import api from '../services/api';
+import { useWishlist } from "../context/WishlistContext";
 
 function Navbar({ customer }) {
     const navigate = useNavigate();
+
+    const { wishlistCount } = useWishlist();
     const { cartCount } = useCart();
 
     const handleLogout = async () => {
@@ -68,7 +71,7 @@ function Navbar({ customer }) {
                         onClick={() => navigate('/wishlist')}
                         className="hidden sm:inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-pink-50 hover:text-pink-600 cursor-pointer"
                     >
-                        ❤️ Wishlist
+                        ❤️ Wishlist ({wishlistCount})
                     </button>
 
                     {/* Cart */}

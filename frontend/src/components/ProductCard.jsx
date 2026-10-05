@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 
 function ProductCard({
     product,
@@ -14,6 +15,7 @@ function ProductCard({
     const [addingToCart, setAddingToCart] = useState(false);
     const [cartMessage, setCartMessage] = useState("");
 
+    const { addToWishlist } = useWishlist();
     const { addToCart } = useCart();
 
     const handleAddToWishlist = async () => {
@@ -21,7 +23,7 @@ function ProductCard({
             setSaving(true);
             setMessage("");
 
-            await api.post(`/wishlist/${product._id}`);
+            await addToWishlist(product._id);
 
             onWishlistChange(product._id);
 
