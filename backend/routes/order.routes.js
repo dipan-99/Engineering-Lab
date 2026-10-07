@@ -1,7 +1,9 @@
 import express from "express";
 import {
     createPaymentOrder,
-    verifyPayment
+    verifyPayment,
+    getMyOrders,
+    getOrderById
 } from "../controllers/order.controller.js";
 
 import isAuthenticated from "../middlewares/auth.middleware.js";
@@ -18,6 +20,14 @@ router.post(
     "/verify-payment",
     isAuthenticated,
     verifyPayment
+);
+
+router.get("/", isAuthenticated, getMyOrders);
+
+router.get(
+    "/:id",
+    isAuthenticated,
+    getOrderById
 );
 
 export default router;
