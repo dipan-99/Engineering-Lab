@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import api from "../services/api";
 
-function Checkout() {
+const Checkout = () => {
     const { cartItems } = useCart();
+    const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
+    const [shippingAddress, setShippingAddress] = useState({
         fullName: "",
         phone: "",
         addressLine1: "",
@@ -13,28 +16,13 @@ function Checkout() {
         pincode: ""
     });
 
-    const [errors, setErrors] = useState({});
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        const isValid = validateForm();
-
-        if (!isValid) {
-            return;
-        }
-
-        console.log("Shipping Details:", formData);
-    };
+    const totalItems = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+    );
 
     const subtotal = cartItems.reduce(
         (total, item) =>
@@ -42,40 +30,203 @@ function Checkout() {
         0
     );
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        setShippingAddress((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
     const validateForm = () => {
-        const newErrors = {};
-
-        if (!formData.fullName.trim()) {
-            newErrors.fullName = "Full name is required";
+        if (!shippingAddress.fullName.trim()) {
+            setError("Full name is required");
+            return false;
         }
 
-        if (!formData.phone.trim()) {
-            newErrors.phone = "Phone number is required";
-        } else if (!/^[0-9]{10}$/.test(formData.phone.trim())) {
-            newErrors.phone = "Phone number must be 10 digits";
+        if (!/^[0-9]{10}$/.test(shippingAddress.phone.trim())) {
+            setError("Phone number must be exactly 10 digits");
+            return false;
         }
 
-        if (!formData.addressLine1.trim()) {
-            newErrors.addressLine1 = "Address is required";
+        if (!shippingAddress.addressLine1.trim()) {
+            setError("Address is required");
+            return false;
         }
 
-        if (!formData.city.trim()) {
-            newErrors.city = "City is required";
+        if (!shippingAddress.city.trim()) {
+            setError("City is required");
+            return false;
         }
 
-        if (!formData.state.trim()) {
-            newErrors.state = "State is required";
+        if (!shippingAddress.state.trim()) {
+            setError("State is required");
+            return false;
         }
 
-        if (!formData.pincode.trim()) {
-            newErrors.pincode = "Pincode is required";
-        } else if (!/^[0-9]{6}$/.test(formData.pincode.trim())) {
-            newErrors.pincode = "Pincode must be exactly 6 digits";
+        if (!/^[0-9]{6}$/.test(shippingAddress.pincode.trim())) {
+            setError("Pincode must be exactly 6 digits");
+            return false;
         }
 
-        setErrors(newErrors);
+        setError("");
+        return true;
+    };
 
-        return Object.keys(newErrors).length === 0;
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            const existingScript = document.querySelector(
+                'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+            );
+
+            if (existingScript) {
+                resolve(true);
+                return;
+            }
+
+            const script = document.createElement("script");
+
+            script.src =
+                "https://checkout.razorpay.com/v1/checkout.js";
+
+            script.onload = () => resolve(true);
+
+            script.onerror = () => resolve(false);
+
+            document.body.appendChild(script);
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        console.log("1. Pay Now clicked");
+
+        if (!validateForm()) {
+            console.log("2. Validation failed");
+            return;
+        }
+
+        console.log("3. Validation passed");
+
+        try {
+            setLoading(true);
+            setError("");
+
+            const razorpayLoaded = await loadRazorpayScript();
+
+            console.log("4. Razorpay script loaded:", razorpayLoaded);
+
+            if (!razorpayLoaded) {
+                setError("Failed to load Razorpay Checkout");
+                return;
+            }
+
+            const response = await api.post(
+                "/orders/create-payment-order",
+                {
+                    shippingAddress
+                }
+            );
+
+            console.log("5. Create payment order response:", response.data);
+
+            const data = response.data;
+
+            const options = {
+                key: data.key,
+                amount: data.amount,
+                currency: data.currency,
+                name: "ShopKart",
+                description: "ShopKart Order",
+                order_id: data.razorpayOrderId,
+
+                prefill: {
+                    name: shippingAddress.fullName,
+                    contact: shippingAddress.phone
+                },
+
+                handler: async function (paymentResponse) {
+                    console.log(
+                        "6. RAZORPAY RESPONSE:",
+                        paymentResponse
+                    );
+
+                    try {
+                        console.log("7. Sending verification...");
+
+                        const verifyResponse = await api.post(
+                            "/orders/verify-payment",
+                            {
+                                shopKartOrderId: data.orderId,
+
+                                razorpay_order_id:
+                                    paymentResponse.razorpay_order_id,
+
+                                razorpay_payment_id:
+                                    paymentResponse.razorpay_payment_id,
+
+                                razorpay_signature:
+                                    paymentResponse.razorpay_signature
+                            }
+                        );
+
+                        console.log(
+                            "8. Verification response:",
+                            verifyResponse.data
+                        );
+
+                        if (verifyResponse.data.success) {
+                            console.log("9. PAYMENT VERIFIED!");
+
+                            await refreshCart();
+
+                            console.log("10. Cart refreshed");
+
+                            navigate(`/order-success/${data.orderId}`);
+
+                            console.log("11. Navigation called");
+                        }
+
+                    } catch (error) {
+                        console.error(
+                            "10. Verification error:",
+                            error.response?.data || error
+                        );
+                    }
+                },
+
+                modal: {
+                    ondismiss: function () {
+                        console.log("Razorpay modal closed");
+                    }
+                }
+            };
+
+            console.log("11. Razorpay options:", options);
+
+            const razorpay = new window.Razorpay(options);
+
+            console.log("12. Razorpay instance created");
+
+            razorpay.on("payment.failed", function (response) {
+                console.log("========== RAZORPAY PAYMENT FAILED ==========");
+                console.log("Error:", response.error);
+            });
+
+            razorpay.open();
+
+            console.log("13. Razorpay opened");
+
+        } catch (error) {
+            console.error(
+                "Checkout error:",
+                error.response?.data || error
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -83,167 +234,119 @@ function Checkout() {
 
             <h1>Checkout</h1>
 
-            <div className="checkout-layout">
+            <div className="checkout-container">
 
-                {/* Shipping Details */}
-                <div className="checkout-form-container">
+                <form
+                    className="checkout-form"
+                    onSubmit={handleSubmit}
+                >
 
                     <h2>Shipping Details</h2>
 
-                    <form onSubmit={handleSubmit}>
+                    {error && (
+                        <p className="error-message">
+                            {error}
+                        </p>
+                    )}
 
-                        <div className="form-group">
-                            <label>Full Name</label>
+                    <div>
+                        <label>Full Name</label>
 
-                            <input
-                                type="text"
-                                name="fullName"
-                                value={formData.fullName}
-                                onChange={handleChange}
-                                placeholder="Enter your full name"
-                            />
+                        <input
+                            type="text"
+                            name="fullName"
+                            value={shippingAddress.fullName}
+                            onChange={handleChange}
+                            placeholder="Enter your full name"
+                        />
+                    </div>
 
-                            {errors.fullName && (
-                                <p className="form-error">
-                                    {errors.fullName}
-                                </p>
-                            )}
-                        </div>
+                    <div>
+                        <label>Phone</label>
 
-                        <div className="form-group">
-                            <label>Phone</label>
+                        <input
+                            type="text"
+                            name="phone"
+                            value={shippingAddress.phone}
+                            onChange={handleChange}
+                            placeholder="10-digit phone number"
+                        />
+                    </div>
 
-                            <input
-                                type="text"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                placeholder="Enter your phone number"
-                            />
+                    <div>
+                        <label>Address</label>
 
-                            {errors.phone && (
-                                <p className="form-error">
-                                    {errors.phone}
-                                </p>
-                            )}
-                        </div>
+                        <input
+                            type="text"
+                            name="addressLine1"
+                            value={shippingAddress.addressLine1}
+                            onChange={handleChange}
+                            placeholder="Enter your address"
+                        />
+                    </div>
 
-                        <div className="form-group">
-                            <label>Address</label>
+                    <div>
+                        <label>City</label>
 
-                            <input
-                                type="text"
-                                name="addressLine1"
-                                value={formData.addressLine1}
-                                onChange={handleChange}
-                                placeholder="Enter your address"
-                            />
+                        <input
+                            type="text"
+                            name="city"
+                            value={shippingAddress.city}
+                            onChange={handleChange}
+                            placeholder="Enter your city"
+                        />
+                    </div>
 
-                            {errors.addressLine1 && (
-                                <p className="form-error">
-                                    {errors.addressLine1}
-                                </p>
-                            )}
-                        </div>
+                    <div>
+                        <label>State</label>
 
-                        <div className="form-group">
-                            <label>City</label>
+                        <input
+                            type="text"
+                            name="state"
+                            value={shippingAddress.state}
+                            onChange={handleChange}
+                            placeholder="Enter your state"
+                        />
+                    </div>
 
-                            <input
-                                type="text"
-                                name="city"
-                                value={formData.city}
-                                onChange={handleChange}
-                                placeholder="Enter your city"
-                            />
+                    <div>
+                        <label>Pincode</label>
 
-                            {errors.city && (
-                                <p className="form-error">
-                                    {errors.city}
-                                </p>
-                            )}
-                        </div>
+                        <input
+                            type="text"
+                            name="pincode"
+                            value={shippingAddress.pincode}
+                            onChange={handleChange}
+                            placeholder="6-digit pincode"
+                        />
+                    </div>
 
-                        <div className="form-group">
-                            <label>State</label>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                    >
+                        {loading
+                            ? "Processing..."
+                            : "Pay Now"}
+                    </button>
 
-                            <input
-                                type="text"
-                                name="state"
-                                value={formData.state}
-                                onChange={handleChange}
-                                placeholder="Enter your state"
-                            />
+                </form>
 
-                            {errors.state && (
-                                <p className="form-error">
-                                    {errors.state}
-                                </p>
-                            )}
-                        </div>
-
-                        <div className="form-group">
-                            <label>Pincode</label>
-
-                            <input
-                                type="text"
-                                name="pincode"
-                                value={formData.pincode}
-                                onChange={handleChange}
-                                placeholder="Enter your pincode"
-                            />
-
-                            {errors.pincode && (
-                                <p className="form-error">
-                                    {errors.pincode}
-                                </p>
-                            )}
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="place-order-button"
-                        >
-                            Continue
-                        </button>
-
-                    </form>
-
-                </div>
-
-                {/* Order Summary */}
-                <div className="checkout-summary">
+                <div className="order-summary">
 
                     <h2>Order Summary</h2>
 
-                    {cartItems.map((item) => (
-                        <div
-                            className="checkout-item"
-                            key={item.product._id}
-                        >
-                            <span>
-                                {item.product.name} × {item.quantity}
-                            </span>
+                    <p>
+                        Items: {totalItems}
+                    </p>
 
-                            <span>
-                                ₹
-                                {(
-                                    item.product.price *
-                                    item.quantity
-                                ).toFixed(2)}
-                            </span>
-                        </div>
-                    ))}
+                    <p>
+                        Subtotal: ₹{subtotal.toFixed(2)}
+                    </p>
 
-                    <hr />
-
-                    <div className="checkout-total">
-                        <strong>Total</strong>
-
-                        <strong>
-                            ₹{subtotal.toFixed(2)}
-                        </strong>
-                    </div>
+                    <h3>
+                        Total: ₹{subtotal.toFixed(2)}
+                    </h3>
 
                 </div>
 
@@ -251,6 +354,6 @@ function Checkout() {
 
         </div>
     );
-}
+};
 
 export default Checkout;

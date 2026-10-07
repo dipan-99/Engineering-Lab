@@ -205,12 +205,12 @@ function Cart() {
                         </span>
                     </div>
 
-                    <button
+                    <Link
                         to="/checkout"
                         className="checkout-button"
                     >
                         Proceed to Checkout
-                    </button>
+                    </Link>
 
                 </div>
 
