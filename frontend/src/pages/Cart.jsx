@@ -206,8 +206,8 @@ function Cart() {
                     </div>
 
                     <button
+                        to="/checkout"
                         className="checkout-button"
-                        disabled
                     >
                         Proceed to Checkout
                     </button>
