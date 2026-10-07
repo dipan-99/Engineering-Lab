@@ -27,6 +27,12 @@ function Checkout() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        const isValid = validateForm();
+
+        if (!isValid) {
+            return;
+        }
+
         console.log("Shipping Details:", formData);
     };
 
@@ -35,6 +41,42 @@ function Checkout() {
             total + item.product.price * item.quantity,
         0
     );
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.fullName.trim()) {
+            newErrors.fullName = "Full name is required";
+        }
+
+        if (!formData.phone.trim()) {
+            newErrors.phone = "Phone number is required";
+        } else if (!/^[0-9]{10}$/.test(formData.phone.trim())) {
+            newErrors.phone = "Phone number must be 10 digits";
+        }
+
+        if (!formData.addressLine1.trim()) {
+            newErrors.addressLine1 = "Address is required";
+        }
+
+        if (!formData.city.trim()) {
+            newErrors.city = "City is required";
+        }
+
+        if (!formData.state.trim()) {
+            newErrors.state = "State is required";
+        }
+
+        if (!formData.pincode.trim()) {
+            newErrors.pincode = "Pincode is required";
+        } else if (!/^[0-9]{6}$/.test(formData.pincode.trim())) {
+            newErrors.pincode = "Pincode must be exactly 6 digits";
+        }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    };
 
     return (
         <div className="checkout-page">
@@ -60,6 +102,12 @@ function Checkout() {
                                 onChange={handleChange}
                                 placeholder="Enter your full name"
                             />
+
+                            {errors.fullName && (
+                                <p className="form-error">
+                                    {errors.fullName}
+                                </p>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -72,6 +120,12 @@ function Checkout() {
                                 onChange={handleChange}
                                 placeholder="Enter your phone number"
                             />
+
+                            {errors.phone && (
+                                <p className="form-error">
+                                    {errors.phone}
+                                </p>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -84,6 +138,12 @@ function Checkout() {
                                 onChange={handleChange}
                                 placeholder="Enter your address"
                             />
+
+                            {errors.addressLine1 && (
+                                <p className="form-error">
+                                    {errors.addressLine1}
+                                </p>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -96,6 +156,12 @@ function Checkout() {
                                 onChange={handleChange}
                                 placeholder="Enter your city"
                             />
+
+                            {errors.city && (
+                                <p className="form-error">
+                                    {errors.city}
+                                </p>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -108,6 +174,12 @@ function Checkout() {
                                 onChange={handleChange}
                                 placeholder="Enter your state"
                             />
+
+                            {errors.state && (
+                                <p className="form-error">
+                                    {errors.state}
+                                </p>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -120,6 +192,12 @@ function Checkout() {
                                 onChange={handleChange}
                                 placeholder="Enter your pincode"
                             />
+
+                            {errors.pincode && (
+                                <p className="form-error">
+                                    {errors.pincode}
+                                </p>
+                            )}
                         </div>
 
                         <button
