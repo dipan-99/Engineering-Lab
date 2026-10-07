@@ -17,6 +17,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
 
 function AppLayout() {
     const location = useLocation();
@@ -73,6 +74,11 @@ function AppLayout() {
                 <Route
                     path="/checkout"
                     element={<Checkout />}
+                />
+
+                <Route
+                    path="/order-success/:id"
+                    element={<OrderSuccess />}
                 />
             </Routes>
         </>

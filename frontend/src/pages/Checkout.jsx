@@ -4,7 +4,7 @@ import { useCart } from "../context/CartContext";
 import api from "../services/api";
 
 const Checkout = () => {
-    const { cartItems } = useCart();
+    const { cartItems, refreshCart } = useCart();
     const navigate = useNavigate();
 
     const [shippingAddress, setShippingAddress] = useState({
@@ -18,6 +18,7 @@ const Checkout = () => {
 
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
 
     const totalItems = cartItems.reduce(
         (total, item) => total + item.quantity,
@@ -180,13 +181,15 @@ const Checkout = () => {
                         if (verifyResponse.data.success) {
                             console.log("9. PAYMENT VERIFIED!");
 
+                            console.log("10. About to refresh cart");
+
                             await refreshCart();
 
-                            console.log("10. Cart refreshed");
+                            console.log("11. Cart refreshed");
 
                             navigate(`/order-success/${data.orderId}`);
 
-                            console.log("11. Navigation called");
+                            console.log("12. Navigation called");
                         }
 
                     } catch (error) {
