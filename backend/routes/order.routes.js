@@ -1,7 +1,7 @@
 import express from "express";
-
 import {
-    createPaymentOrder
+    createPaymentOrder,
+    verifyPayment
 } from "../controllers/order.controller.js";
 
 import isAuthenticated from "../middlewares/auth.middleware.js";
@@ -12,6 +12,12 @@ router.post(
     "/create-payment-order",
     isAuthenticated,
     createPaymentOrder
+);
+
+router.post(
+    "/verify-payment",
+    isAuthenticated,
+    verifyPayment
 );
 
 export default router;
