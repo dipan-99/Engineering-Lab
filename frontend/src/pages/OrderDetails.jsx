@@ -35,90 +35,293 @@ const OrderDetails = () => {
     }, [id]);
 
     if (loading) {
-        return <p>Loading order...</p>;
+        return (
+            <div className="order-details-page">
+                <div className="order-details-container">
+                    <div className="orders-state">
+                        <div className="loader"></div>
+                        <p>Loading order...</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (error) {
         return (
-            <div>
-                <p>{error}</p>
+            <div className="order-details-page">
+                <div className="order-details-container">
+                    <div className="orders-state error-state">
+                        <h2>Something went wrong</h2>
+                        <p>{error}</p>
 
-                <Link to="/orders">
-                    Back to My Orders
-                </Link>
+                        <Link
+                            to="/orders"
+                            className="primary-btn"
+                        >
+                            Back to My Orders
+                        </Link>
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (!order) {
-        return <p>Order not found.</p>;
+        return (
+            <div className="order-details-page">
+                <div className="order-details-container">
+                    <div className="orders-state">
+                        <h2>Order Not Found</h2>
+
+                        <Link
+                            to="/orders"
+                            className="primary-btn"
+                        >
+                            Back to My Orders
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <h2>Order Details</h2>
+        <div className="order-details-page">
+            <div className="order-details-container">
 
-            <p>
-                <strong>Order ID:</strong> {order._id}
-            </p>
+                {/* Back Button */}
+                <Link
+                    to="/orders"
+                    className="order-details-back-link"
+                >
+                    ← Back to My Orders
+                </Link>
 
-            <p>
-                <strong>Date:</strong>{" "}
-                {new Date(order.createdAt).toLocaleString()}
-            </p>
 
-            <p>
-                <strong>Status:</strong> {order.status}
-            </p>
+                {/* Header */}
+                <div className="details-header">
 
-            <p>
-                <strong>Payment:</strong> {order.paymentStatus}
-            </p>
+                    <div>
+                        <p className="details-label">
+                            ORDER DETAILS
+                        </p>
 
-            <h3>Items</h3>
+                        <h1>
+                            #{order._id}
+                        </h1>
 
-            {order.items.map((item, index) => (
-                <div key={index}>
-                    <p>
-                        <strong>{item.name}</strong>
-                    </p>
+                        <p>
+                            Placed on{" "}
+                            {new Date(
+                                order.createdAt
+                            ).toLocaleString()}
+                        </p>
+                    </div>
 
-                    <p>
-                        Price: ₹{item.price}
-                    </p>
 
-                    <p>
-                        Quantity: {item.quantity}
-                    </p>
+                    {/* Status */}
+                    <div className="details-status">
 
-                    <p>
-                        Subtotal: ₹{item.price * item.quantity}
-                    </p>
+                        <span
+                            className={`big-status ${order.status === "PLACED"
+                                    ? "status-success"
+                                    : "status-pending"
+                                }`}
+                        >
+                            {order.status}
+                        </span>
 
-                    <hr />
+                        <span
+                            className={`big-payment ${order.paymentStatus === "PAID"
+                                    ? "paid"
+                                    : "pending"
+                                }`}
+                        >
+                            Payment: {order.paymentStatus}
+                        </span>
+
+                    </div>
+
                 </div>
-            ))}
 
-            <h3>
-                Total: ₹{order.totalAmount}
-            </h3>
 
-            <h3>Shipping Address</h3>
+                {/* Main Content */}
+                <div className="details-grid">
 
-            <p>{order.shippingAddress.fullName}</p>
-            <p>{order.shippingAddress.phone}</p>
-            <p>{order.shippingAddress.addressLine1}</p>
-            <p>
-                {order.shippingAddress.city},{" "}
-                {order.shippingAddress.state}
-            </p>
-            <p>{order.shippingAddress.pincode}</p>
+                    {/* Left Side */}
+                    <div className="details-main">
 
-            <br />
+                        <div className="details-card">
 
-            <Link to="/orders">
-                ← Back to My Orders
-            </Link>
+                            <h2>
+                                Items Ordered
+                            </h2>
+
+
+                            {order.items.map((item, index) => (
+
+                                <div
+                                    className="details-item"
+                                    key={index}
+                                >
+
+                                    {/* Product Image */}
+                                    {item.image && (
+                                        <img
+                                            src={item.image}
+                                            alt={item.name}
+                                        />
+                                    )}
+
+
+                                    {/* Product Info */}
+                                    <div className="details-item-info">
+
+                                        <h3>
+                                            {item.name}
+                                        </h3>
+
+                                        <p>
+                                            ₹{item.price} ×{" "}
+                                            {item.quantity}
+                                        </p>
+
+                                    </div>
+
+
+                                    {/* Item Total */}
+                                    <strong>
+                                        ₹
+                                        {item.price *
+                                            item.quantity}
+                                    </strong>
+
+                                </div>
+
+                            ))}
+
+
+                            {/* Total */}
+                            <div className="details-total">
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <strong>
+                                    ₹{order.totalAmount}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {/* Right Side */}
+                    <div className="details-sidebar">
+
+
+                        {/* Shipping Address */}
+                        <div className="details-card">
+
+                            <h2>
+                                Shipping Address
+                            </h2>
+
+                            <div className="address">
+
+                                <strong>
+                                    {
+                                        order
+                                            .shippingAddress
+                                            .fullName
+                                    }
+                                </strong>
+
+                                <p>
+                                    {
+                                        order
+                                            .shippingAddress
+                                            .phone
+                                    }
+                                </p>
+
+                                <p>
+                                    {
+                                        order
+                                            .shippingAddress
+                                            .addressLine1
+                                    }
+                                </p>
+
+                                <p>
+                                    {
+                                        order
+                                            .shippingAddress
+                                            .city
+                                    }
+                                    ,{" "}
+                                    {
+                                        order
+                                            .shippingAddress
+                                            .state
+                                    }
+                                </p>
+
+                                <p>
+                                    {
+                                        order
+                                            .shippingAddress
+                                            .pincode
+                                    }
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        {/* Payment Information */}
+                        <div className="details-card">
+
+                            <h2>
+                                Payment
+                            </h2>
+
+                            <div className="payment-row">
+
+                                <span>
+                                    Payment Status
+                                </span>
+
+                                <strong>
+                                    {order.paymentStatus}
+                                </strong>
+
+                            </div>
+
+                            <div className="payment-row">
+
+                                <span>
+                                    Order Status
+                                </span>
+
+                                <strong>
+                                    {order.status}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
         </div>
     );
 };
