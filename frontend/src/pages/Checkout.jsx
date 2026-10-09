@@ -200,7 +200,7 @@ const Checkout = () => {
 
                             await refreshCart();
 
-                            navigate(`/ order-success / ${ data.orderId } `);
+                            navigate(`/order-success/${data.orderId}`);
                         }
                     } catch (verificationError) {
                         console.error(
