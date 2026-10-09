@@ -38,60 +38,20 @@ function AppLayout() {
                     element={<Navigate to="/login" replace />}
                 />
 
-                <Route
-                    path="/register"
-                    element={<Register />}
-                />
-
-                <Route
-                    path="/login"
-                    element={<Login />}
-                />
-
-                <Route
-                    path="/home"
-                    element={<Home />}
-                />
-
-                <Route
-                    path="/products"
-                    element={<Products />}
-                />
-
-                <Route
-                    path="/products/:id"
-                    element={<ProductDetails />}
-                />
-
-                <Route
-                    path="/wishlist"
-                    element={<Wishlist />}
-                />
-
-                <Route
-                    path="/cart"
-                    element={<Cart />}
-                />
-
-                <Route
-                    path="/checkout"
-                    element={<Checkout />}
-                />
-
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
                 <Route
                     path="/order-success/:id"
                     element={<OrderSuccess />}
                 />
-
-                <Route
-                    path="/orders"
-                    element={<Orders />}
-                />
-
-                <Route
-                    path="/orders/:id"
-                    element={<OrderDetails />}
-                />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/orders/:id" element={<OrderDetails />} />
             </Routes>
         </>
     );
