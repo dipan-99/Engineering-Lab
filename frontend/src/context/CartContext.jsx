@@ -75,10 +75,10 @@ export function CartProvider({ children }) {
     const updateQuantity = async (productId, quantity) => {
         const previousItems = [...cartItems];
 
-        // Update UI immediately
+        // Update the UI immediately
         setCartItems((currentItems) =>
             currentItems.map((item) =>
-                item.product._id === productId
+                String(item.product._id) === String(productId)
                     ? { ...item, quantity }
                     : item
             )
@@ -87,9 +87,8 @@ export function CartProvider({ children }) {
         try {
             await api.patch(`/cart/${productId}`, { quantity });
         } catch (err) {
-            // Restore previous quantity if backend rejects the update
+            // Restore the previous state if the update fails
             setCartItems(previousItems);
-
             throw err;
         }
     };
