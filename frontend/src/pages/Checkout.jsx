@@ -192,15 +192,22 @@ const Checkout = () => {
                             }
                         );
 
+                        console.log("Payment verification response:", verifyResponse.data);
+
                         if (verifyResponse.data.success) {
-                            // Clear saved address only after verified payment
-                            sessionStorage.removeItem(
-                                SHIPPING_STORAGE_KEY
-                            );
+                            sessionStorage.removeItem(SHIPPING_STORAGE_KEY);
 
-                            await refreshCart();
-
-                            navigate(`/order-success/${data.orderId}`);
+                            // Navigate immediately so the checkout's empty-cart redirect
+                            // cannot send the customer away from the success page.
+                            setProcessing(false);
+                            
+                            navigate(`/order-success/${verifyResponse.data.orderId}`, {
+                                replace: true,
+                            });
+                            // Refresh the shared cart separately.
+                            refreshCart().catch((cartError) => {
+                                console.error("Failed to refresh cart after payment:", cartError);
+                            });
                         }
                     } catch (verificationError) {
                         console.error(
