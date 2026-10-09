@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../services/api";
+import { useCart } from "../context/CartContext";
 
 function ProductDetails() {
     const { id } = useParams();
+    const { addToCart } = useCart();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [adding, setAdding] = useState(false);
+    const [cartMessage, setCartMessage] = useState("");
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -15,12 +19,15 @@ function ProductDetails() {
                 setLoading(true);
                 setError("");
 
-                const response = await api.get(`/products/${id}`);
+                const response = await api.get("/products/" + id.trim());
 
                 setProduct(response.data.product);
             } catch (err) {
+                console.error("Product fetch failed:", err);
+
                 setError(
                     err.response?.data?.message ||
+                    err.message ||
                     "Something went wrong while loading the product."
                 );
             } finally {
@@ -30,6 +37,25 @@ function ProductDetails() {
 
         fetchProduct();
     }, [id]);
+
+    const handleAddToCart = async () => {
+        try {
+            setAdding(true);
+            setCartMessage("");
+
+            await addToCart(product._id);
+
+            setCartMessage("Product added to cart successfully!");
+        } catch (err) {
+            setCartMessage(
+                err.response?.data?.message ||
+                err.message ||
+                "Failed to add product to cart."
+            );
+        } finally {
+            setAdding(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -76,7 +102,6 @@ function ProductDetails() {
             <div className="product-details-card">
 
                 <div className="product-details-image-container">
-
                     <img
                         className="product-details-image"
                         src={product.image}
@@ -85,7 +110,6 @@ function ProductDetails() {
                             e.currentTarget.src = "/vite.svg";
                         }}
                     />
-
                 </div>
 
                 <div className="product-details-info">
@@ -110,12 +134,41 @@ function ProductDetails() {
                         {product.stock}
                     </p>
 
-                    <button className="add-to-cart">
-                        Add to Cart
-                    </button>
+                    <div className="product-details-actions">
+
+                        <button
+                            className="add-to-cart"
+                            onClick={handleAddToCart}
+                            disabled={
+                                adding || product.stock <= 0
+                            }
+                        >
+                            {product.stock <= 0
+                                ? "Out of Stock"
+                                : adding
+                                    ? "Adding..."
+                                    : "Add to Cart"}
+                        </button>
+
+                        <Link
+                            to="/cart"
+                            className="details-cart-link"
+                        >
+                            View Cart <span>→</span>
+                        </Link>
+
+                    </div>
+
+                    {cartMessage && (
+                        <p
+                            role="status"
+                            className="cart-feedback"
+                        >
+                            {cartMessage}
+                        </p>
+                    )}
 
                 </div>
-
             </div>
         </div>
     );

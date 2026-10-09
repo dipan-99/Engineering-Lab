@@ -1398,3 +1398,110 @@
         box-sizing: border-box;
     }
 }
+
+/* Product Details Action Buttons */
+
+.product-details-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.product-details-actions .add-to-cart {
+    margin: 0;
+    min-height: 44px;
+    padding: 12px 22px;
+    border: 1px solid #222;
+    border-radius: 7px;
+    background: #222;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.product-details-actions .add-to-cart:hover:not(:disabled) {
+    background: #444;
+    transform: translateY(-1px);
+}
+
+.product-details-actions .add-to-cart:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.details-cart-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    color: #374151;
+    background: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    box-sizing: border-box;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.details-cart-link:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.details-cart-link span {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.cart-feedback {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Proceed to Checkout Button */
+.cart-summary .checkout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 16px;
+    margin-top: 18px;
+    box-sizing: border-box;
+
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+
+    cursor: pointer;
+    transition: background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.cart-summary .checkout-button:hover {
+    background: #1d4ed8;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+.cart-summary .checkout-button:active {
+    background: #1e40af;
+}
+
