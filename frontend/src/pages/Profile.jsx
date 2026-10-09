@@ -257,7 +257,7 @@ function Profile() {
                                 {!editing && (
                                     <button
                                         onClick={handleEdit}
-                                        className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                                        className="cursor-pointer rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
                                     >
                                         ✏️ Edit Profile
                                     </button>
@@ -358,7 +358,7 @@ function Profile() {
                                         <button
                                             type="submit"
                                             disabled={saving}
-                                            className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                            className="cursor-pointer rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
                                         >
                                             {saving
                                                 ? "Saving..."
@@ -369,7 +369,7 @@ function Profile() {
                                             type="button"
                                             onClick={handleCancel}
                                             disabled={saving}
-                                            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+                                            className="cursor-pointer rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
                                         >
                                             Cancel
                                         </button>
