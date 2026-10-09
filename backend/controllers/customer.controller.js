@@ -2,11 +2,13 @@ import bcrypt from "bcrypt";
 import Customer from "../models/customer.model.js";
 import generateToken from "../utils/generateToken.js";
 
+
 const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax"
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 };
+
 
 export const registerCustomer = async (req, res) => {
     try {
