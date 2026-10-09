@@ -11,16 +11,13 @@ function Products() {
     const [wishlistIds, setWishlistIds] = useState(new Set());
     const [priceRange, setPriceRange] = useState("");
 
-    // Fetch wishlist once when page opens
     useEffect(() => {
         const fetchWishlist = async () => {
             try {
                 const response = await api.get("/wishlist");
 
                 const ids = new Set(
-                    response.data.wishlist.map(
-                        (product) => String(product._id)
-                    )
+                    response.data.wishlist.map((product) => String(product._id)),
                 );
 
                 setWishlistIds(ids);
@@ -32,7 +29,6 @@ function Products() {
         fetchWishlist();
     }, []);
 
-    // Fetch products
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -62,14 +58,14 @@ function Products() {
                 }
 
                 const response = await api.get("/products", {
-                    params
+                    params,
                 });
 
                 setProducts(response.data.products);
             } catch (err) {
                 setError(
                     err.response?.data?.message ||
-                    "Something went wrong while loading products."
+                    "Something went wrong while loading products.",
                 );
             } finally {
                 setLoading(false);
@@ -110,10 +106,7 @@ function Products() {
                     onChange={(e) => setSearch(e.target.value)}
                 />
 
-                <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                >
+                <select value={category} onChange={(e) => setCategory(e.target.value)}>
                     <option value="">All Categories</option>
                     <option value="Electronics">Electronics</option>
                     <option value="Clothing">Clothing</option>

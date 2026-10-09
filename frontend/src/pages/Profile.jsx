@@ -24,7 +24,6 @@ function Profile() {
         phone: "",
     });
 
-    // Initialize form data from shared customer context.
     useEffect(() => {
         if (customer) {
             setFormData({
@@ -39,7 +38,6 @@ function Profile() {
         setLoading(false);
     }, [customer]);
 
-    // Customer initials
     const initials = customer?.fullName
         ? customer.fullName
             .trim()
@@ -50,7 +48,6 @@ function Profile() {
             .slice(0, 2)
         : "SK";
 
-    // Handle input changes
     const handleInputChange = (event) => {
         const { name, value } = event.target;
 
@@ -60,7 +57,6 @@ function Profile() {
         }));
     };
 
-    // Open edit mode
     const handleEdit = () => {
         setFormData({
             fullName: customer.fullName ?? "",
@@ -73,7 +69,6 @@ function Profile() {
         setEditing(true);
     };
 
-    // Cancel editing
     const handleCancel = () => {
         setFormData({
             fullName: customer.fullName ?? "",
@@ -86,7 +81,6 @@ function Profile() {
         setSuccess("");
     };
 
-    // Save profile changes
     const handleSave = async (event) => {
         event.preventDefault();
 
@@ -123,10 +117,8 @@ function Profile() {
                 phone,
             });
 
-            const updatedCustomer =
-                response.data.customer ?? response.data;
+            const updatedCustomer = response.data.customer ?? response.data;
 
-            // Update shared context so the navbar updates immediately.
             setCustomer(updatedCustomer);
 
             setFormData({
@@ -136,23 +128,19 @@ function Profile() {
             });
 
             setEditing(false);
-            setSuccess(
-                response.data.message ||
-                "Profile updated successfully!"
-            );
+            setSuccess(response.data.message || "Profile updated successfully!");
         } catch (err) {
             console.error("Failed to update profile:", err);
 
             setError(
                 err.response?.data?.message ||
-                "Failed to update your profile. Please try again."
+                "Failed to update your profile. Please try again.",
             );
         } finally {
             setSaving(false);
         }
     };
 
-    // Loading state
     if (loading) {
         return (
             <div className="flex min-h-[70vh] items-center justify-center">
@@ -167,7 +155,6 @@ function Profile() {
         );
     }
 
-    // Customer unavailable
     if (!customer) {
         return (
             <div className="flex min-h-[70vh] items-center justify-center px-4">
@@ -179,8 +166,7 @@ function Profile() {
                     </h2>
 
                     <p className="mt-2 text-sm text-slate-500">
-                        Your profile could not be loaded. Please log in
-                        again.
+                        Your profile could not be loaded. Please log in again.
                     </p>
 
                     <button
@@ -197,7 +183,6 @@ function Profile() {
     return (
         <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-6xl">
-                {/* Page heading */}
                 <div className="mb-8">
                     <p className="text-sm font-semibold text-indigo-600">
                         SHOPKART ACCOUNT
@@ -208,15 +193,12 @@ function Profile() {
                     </h1>
 
                     <p className="mt-2 text-slate-500">
-                        View your account details and manage your shopping
-                        activity.
+                        View your account details and manage your shopping activity.
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    {/* Customer information */}
                     <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
-                        {/* Profile banner */}
                         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-8 sm:px-8">
                             <div className="flex flex-col items-center gap-5 sm:flex-row">
                                 <div className="flex h-24 w-24 items-center justify-center rounded-3xl border-4 border-white/30 bg-white text-3xl font-black text-indigo-700 shadow-lg">
@@ -239,7 +221,6 @@ function Profile() {
                             </div>
                         </div>
 
-                        {/* Personal information */}
                         <div className="p-6 sm:p-8">
                             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                                 <div>
@@ -264,7 +245,6 @@ function Profile() {
                                 )}
                             </div>
 
-                            {/* Success message */}
                             {success && (
                                 <div
                                     role="status"
@@ -274,7 +254,6 @@ function Profile() {
                                 </div>
                             )}
 
-                            {/* Error message */}
                             {error && (
                                 <div
                                     role="alert"
@@ -287,7 +266,6 @@ function Profile() {
                             {editing ? (
                                 <form onSubmit={handleSave}>
                                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                                        {/* Full name */}
                                         <div>
                                             <label
                                                 htmlFor="fullName"
@@ -309,7 +287,6 @@ function Profile() {
                                             />
                                         </div>
 
-                                        {/* Email */}
                                         <div>
                                             <label
                                                 htmlFor="email"
@@ -330,7 +307,6 @@ function Profile() {
                                             />
                                         </div>
 
-                                        {/* Phone */}
                                         <div className="sm:col-span-2">
                                             <label
                                                 htmlFor="phone"
@@ -353,16 +329,13 @@ function Profile() {
                                         </div>
                                     </div>
 
-                                    {/* Form actions */}
                                     <div className="mt-6 flex flex-wrap gap-3">
                                         <button
                                             type="submit"
                                             disabled={saving}
                                             className="cursor-pointer rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
                                         >
-                                            {saving
-                                                ? "Saving..."
-                                                : "Save Changes"}
+                                            {saving ? "Saving..." : "Save Changes"}
                                         </button>
 
                                         <button
@@ -384,8 +357,7 @@ function Profile() {
                                             </p>
 
                                             <p className="mt-2 break-words font-semibold text-slate-900">
-                                                {customer.fullName ||
-                                                    "Not provided"}
+                                                {customer.fullName || "Not provided"}
                                             </p>
                                         </div>
 
@@ -395,8 +367,7 @@ function Profile() {
                                             </p>
 
                                             <p className="mt-2 break-all font-semibold text-slate-900">
-                                                {customer.email ||
-                                                    "Not provided"}
+                                                {customer.email || "Not provided"}
                                             </p>
                                         </div>
 
@@ -406,8 +377,7 @@ function Profile() {
                                             </p>
 
                                             <p className="mt-2 font-semibold text-slate-900">
-                                                {customer.phone ||
-                                                    "Not provided"}
+                                                {customer.phone || "Not provided"}
                                             </p>
                                         </div>
                                     </div>
@@ -418,8 +388,8 @@ function Profile() {
                                         </p>
 
                                         <p className="mt-1 text-sm text-indigo-700">
-                                            Your saved changes will be stored
-                                            in your ShopKart account.
+                                            Your saved changes will be stored in your ShopKart
+                                            account.
                                         </p>
                                     </div>
                                 </>
@@ -427,18 +397,14 @@ function Profile() {
                         </div>
                     </section>
 
-                    {/* Account shortcuts */}
                     <aside className="space-y-5">
                         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                            <h3 className="text-lg font-bold text-slate-900">
-                                My Activity
-                            </h3>
+                            <h3 className="text-lg font-bold text-slate-900">My Activity</h3>
 
                             <p className="mt-1 text-sm text-slate-500">
                                 Quick access to your shopping
                             </p>
 
-                            {/* Orders */}
                             <button
                                 onClick={() => navigate("/orders")}
                                 className="mt-5 flex w-full items-center justify-between rounded-2xl border border-slate-100 p-4 text-left transition hover:border-indigo-200 hover:bg-indigo-50"
@@ -461,7 +427,6 @@ function Profile() {
                                 <span className="text-slate-400">→</span>
                             </button>
 
-                            {/* Wishlist */}
                             <button
                                 onClick={() => navigate("/wishlist")}
                                 className="mt-3 flex w-full items-center justify-between rounded-2xl border border-slate-100 p-4 text-left transition hover:border-pink-200 hover:bg-pink-50"
@@ -486,7 +451,6 @@ function Profile() {
                                 </span>
                             </button>
 
-                            {/* Cart */}
                             <button
                                 onClick={() => navigate("/cart")}
                                 className="mt-3 flex w-full items-center justify-between rounded-2xl border border-slate-100 p-4 text-left transition hover:border-green-200 hover:bg-green-50"
@@ -512,19 +476,13 @@ function Profile() {
                             </button>
                         </section>
 
-                        {/* Shopping card */}
                         <section className="rounded-3xl bg-slate-900 p-6 text-white shadow-sm">
-                            <p className="text-sm font-semibold text-indigo-300">
-                                SHOPKART
-                            </p>
+                            <p className="text-sm font-semibold text-indigo-300">SHOPKART</p>
 
-                            <h3 className="mt-2 text-xl font-bold">
-                                Happy Shopping!
-                            </h3>
+                            <h3 className="mt-2 text-xl font-bold">Happy Shopping!</h3>
 
                             <p className="mt-2 text-sm leading-6 text-slate-300">
-                                Discover products you'll love and keep your
-                                shopping organized.
+                                Discover products you'll love and keep your shopping organized.
                             </p>
 
                             <button

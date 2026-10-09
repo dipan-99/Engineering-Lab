@@ -3,33 +3,30 @@ import Product from "../models/product.model.js";
 
 export const createProduct = async (req, res) => {
     try {
-        const {
-            name,
-            description,
-            price,
-            category,
-            image,
-            stock
-        } = req.body;
+        const { name, description, price, category, image, stock } = req.body;
 
-        // Check required fields
-        if (!name || !description || !price || !category || !image || stock === undefined) {
+        if (
+            !name ||
+            !description ||
+            !price ||
+            !category ||
+            !image ||
+            stock === undefined
+        ) {
             return res.status(400).json({
-                message: "All fields are required"
+                message: "All fields are required",
             });
         }
 
-        // Validate price
         if (price <= 0) {
             return res.status(400).json({
-                message: "Price must be greater than 0"
+                message: "Price must be greater than 0",
             });
         }
 
-        // Validate stock
         if (stock < 0) {
             return res.status(400).json({
-                message: "Stock cannot be negative"
+                message: "Stock cannot be negative",
             });
         }
 
@@ -39,17 +36,16 @@ export const createProduct = async (req, res) => {
             price,
             category,
             image,
-            stock
+            stock,
         });
 
         return res.status(201).json({
             success: true,
-            product
+            product,
         });
-
     } catch (error) {
         return res.status(500).json({
-            message: "Internal Server Error"
+            message: "Internal Server Error",
         });
     }
 };
@@ -60,15 +56,13 @@ export const getAllProducts = async (req, res) => {
 
         const filter = {};
 
-        // Search by product name
         if (search) {
             filter.name = {
                 $regex: search,
-                $options: "i"
+                $options: "i",
             };
         }
 
-        // Filter by category
         if (category) {
             filter.category = category;
         }
@@ -90,12 +84,11 @@ export const getAllProducts = async (req, res) => {
         return res.status(200).json({
             success: true,
             count: products.length,
-            products
+            products,
         });
-
     } catch (error) {
         return res.status(500).json({
-            message: "Internal Server Error"
+            message: "Internal Server Error",
         });
     }
 };
@@ -104,30 +97,27 @@ export const getProductById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Check if ID is a valid MongoDB ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({
-                message: "Invalid product ID"
+                message: "Invalid product ID",
             });
         }
 
         const product = await Product.findById(id);
 
-        // Product does not exist
         if (!product) {
             return res.status(404).json({
-                message: "Product not found"
+                message: "Product not found",
             });
         }
 
         return res.status(200).json({
             success: true,
-            product
+            product,
         });
-
     } catch (error) {
         return res.status(500).json({
-            message: "Internal Server Error"
+            message: "Internal Server Error",
         });
     }
 };

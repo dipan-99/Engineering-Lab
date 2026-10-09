@@ -2,13 +2,11 @@ import bcrypt from "bcrypt";
 import Customer from "../models/customer.model.js";
 import generateToken from "../utils/generateToken.js";
 
-
 const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 };
-
 
 export const registerCustomer = async (req, res) => {
     try {
@@ -19,7 +17,9 @@ export const registerCustomer = async (req, res) => {
         }
 
         if (password.length < 6) {
-            return res.status(400).json({ message: "Password must be at least 6 characters" });
+            return res
+                .status(400)
+                .json({ message: "Password must be at least 6 characters" });
         }
 
         const existingCustomer = await Customer.findOne({ email });
@@ -33,7 +33,7 @@ export const registerCustomer = async (req, res) => {
             fullName,
             email,
             password: hashedPassword,
-            phone
+            phone,
         });
 
         return res.status(201).json({
@@ -43,8 +43,8 @@ export const registerCustomer = async (req, res) => {
                 _id: newCustomer._id,
                 fullName: newCustomer.fullName,
                 email: newCustomer.email,
-                phone: newCustomer.phone
-            }
+                phone: newCustomer.phone,
+            },
         });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error" });
@@ -74,8 +74,9 @@ export const loginCustomer = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Login successful"
-        });ko
+            message: "Login successful",
+        });
+        ko;
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error" });
     }
@@ -94,7 +95,7 @@ export const logoutCustomer = async (req, res) => {
         res.clearCookie("token", cookieOptions);
         return res.status(200).json({
             success: true,
-            message: "Logged out successfully"
+            message: "Logged out successfully",
         });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error" });
@@ -111,7 +112,9 @@ export const changePassword = async (req, res) => {
         }
 
         if (newPassword.length < 6) {
-            return res.status(400).json({ message: "Password must be at least 6 characters" });
+            return res
+                .status(400)
+                .json({ message: "Password must be at least 6 characters" });
         }
 
         const customer = await Customer.findById(req.user._id);
@@ -129,7 +132,7 @@ export const changePassword = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Password changed successfully"
+            message: "Password changed successfully",
         });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error" });
@@ -150,7 +153,7 @@ export const updateCustomerProfile = async (req, res) => {
         ) {
             return res.status(400).json({
                 success: false,
-                message: "Full name, email, and phone are required"
+                message: "Full name, email, and phone are required",
             });
         }
 
@@ -163,30 +166,28 @@ export const updateCustomerProfile = async (req, res) => {
         if (!emailPattern.test(normalizedEmail)) {
             return res.status(400).json({
                 success: false,
-                message: "Please enter a valid email address"
+                message: "Please enter a valid email address",
             });
         }
 
-        // Find the logged-in customer
         const customer = await Customer.findById(req.user._id);
 
         if (!customer) {
             return res.status(404).json({
                 success: false,
-                message: "Customer not found"
+                message: "Customer not found",
             });
         }
 
-        // Prevent another customer from using this email
         const existingCustomer = await Customer.findOne({
             email: normalizedEmail,
-            _id: { $ne: customer._id }
+            _id: { $ne: customer._id },
         });
 
         if (existingCustomer) {
             return res.status(409).json({
                 success: false,
-                message: "Email is already registered to another account"
+                message: "Email is already registered to another account",
             });
         }
 
@@ -203,15 +204,15 @@ export const updateCustomerProfile = async (req, res) => {
                 _id: customer._id,
                 fullName: customer.fullName,
                 email: customer.email,
-                phone: customer.phone
-            }
+                phone: customer.phone,
+            },
         });
     } catch (error) {
         console.error("Update profile error:", error);
 
         return res.status(500).json({
             success: false,
-            message: "Unable to update profile"
+            message: "Unable to update profile",
         });
     }
 };

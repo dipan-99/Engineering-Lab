@@ -11,24 +11,17 @@ const EMPTY_ADDRESS = {
     addressLine1: "",
     city: "",
     state: "",
-    pincode: ""
+    pincode: "",
 };
 
 const Checkout = () => {
-    const {
-        cartItems,
-        loading: cartLoading,
-        refreshCart
-    } = useCart();
+    const { cartItems, loading: cartLoading, refreshCart } = useCart();
 
     const navigate = useNavigate();
 
-    // Restore saved shipping details after a refresh
     const [shippingAddress, setShippingAddress] = useState(() => {
         try {
-            const savedAddress = sessionStorage.getItem(
-                SHIPPING_STORAGE_KEY
-            );
+            const savedAddress = sessionStorage.getItem(SHIPPING_STORAGE_KEY);
 
             return savedAddress
                 ? { ...EMPTY_ADDRESS, ...JSON.parse(savedAddress) }
@@ -43,13 +36,12 @@ const Checkout = () => {
 
     const totalItems = cartItems.reduce(
         (total, item) => total + item.quantity,
-        0
+        0,
     );
 
     const subtotal = cartItems.reduce(
-        (total, item) =>
-            total + item.product.price * item.quantity,
-        0
+        (total, item) => total + item.product.price * item.quantity,
+        0,
     );
 
     const handleChange = (e) => {
@@ -58,19 +50,16 @@ const Checkout = () => {
         setShippingAddress((previousAddress) => {
             const updatedAddress = {
                 ...previousAddress,
-                [name]: value
+                [name]: value,
             };
 
             try {
                 sessionStorage.setItem(
                     SHIPPING_STORAGE_KEY,
-                    JSON.stringify(updatedAddress)
+                    JSON.stringify(updatedAddress),
                 );
             } catch (storageError) {
-                console.error(
-                    "Unable to save checkout details:",
-                    storageError
-                );
+                console.error("Unable to save checkout details:", storageError);
             }
 
             return updatedAddress;
@@ -115,7 +104,7 @@ const Checkout = () => {
     const loadRazorpayScript = () => {
         return new Promise((resolve) => {
             const existingScript = document.querySelector(
-                'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+                'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
             );
 
             if (existingScript) {
@@ -124,8 +113,7 @@ const Checkout = () => {
             }
 
             const script = document.createElement("script");
-            script.src =
-                "https://checkout.razorpay.com/v1/checkout.js";
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
 
             script.onload = () => resolve(true);
             script.onerror = () => resolve(false);
@@ -157,10 +145,9 @@ const Checkout = () => {
                 return;
             }
 
-            const response = await api.post(
-                "/orders/create-payment-order",
-                { shippingAddress }
-            );
+            const response = await api.post("/orders/create-payment-order", {
+                shippingAddress,
+            });
 
             const data = response.data;
 
@@ -174,51 +161,45 @@ const Checkout = () => {
 
                 prefill: {
                     name: shippingAddress.fullName,
-                    contact: shippingAddress.phone
+                    contact: shippingAddress.phone,
                 },
 
                 handler: async (paymentResponse) => {
                     try {
-                        const verifyResponse = await api.post(
-                            "/orders/verify-payment",
-                            {
-                                shopKartOrderId: data.orderId,
-                                razorpay_order_id:
-                                    paymentResponse.razorpay_order_id,
-                                razorpay_payment_id:
-                                    paymentResponse.razorpay_payment_id,
-                                razorpay_signature:
-                                    paymentResponse.razorpay_signature
-                            }
-                        );
+                        const verifyResponse = await api.post("/orders/verify-payment", {
+                            shopKartOrderId: data.orderId,
+                            razorpay_order_id: paymentResponse.razorpay_order_id,
+                            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                            razorpay_signature: paymentResponse.razorpay_signature,
+                        });
 
                         console.log("Payment verification response:", verifyResponse.data);
 
                         if (verifyResponse.data.success) {
                             sessionStorage.removeItem(SHIPPING_STORAGE_KEY);
 
-                            // Navigate immediately so the checkout's empty-cart redirect
-                            // cannot send the customer away from the success page.
                             setProcessing(false);
-                            
+
                             navigate(`/order-success/${verifyResponse.data.orderId}`, {
                                 replace: true,
                             });
-                            // Refresh the shared cart separately.
+
                             refreshCart().catch((cartError) => {
-                                console.error("Failed to refresh cart after payment:", cartError);
+                                console.error(
+                                    "Failed to refresh cart after payment:",
+                                    cartError,
+                                );
                             });
                         }
                     } catch (verificationError) {
                         console.error(
                             "Payment verification failed:",
-                            verificationError.response?.data ||
-                            verificationError
+                            verificationError.response?.data || verificationError,
                         );
 
                         setError(
                             verificationError.response?.data?.message ||
-                            "Payment verification failed. If money was deducted, please contact support."
+                            "Payment verification failed. If money was deducted, please contact support.",
                         );
                     } finally {
                         setProcessing(false);
@@ -228,21 +209,18 @@ const Checkout = () => {
                 modal: {
                     ondismiss: () => {
                         setProcessing(false);
-                    }
-                }
+                    },
+                },
             };
 
             const razorpay = new window.Razorpay(options);
 
             razorpay.on("payment.failed", (paymentFailure) => {
-                console.error(
-                    "Razorpay payment failed:",
-                    paymentFailure.error
-                );
+                console.error("Razorpay payment failed:", paymentFailure.error);
 
                 setError(
                     paymentFailure.error?.description ||
-                    "Payment failed. Please try again."
+                    "Payment failed. Please try again.",
                 );
 
                 setProcessing(false);
@@ -252,19 +230,18 @@ const Checkout = () => {
         } catch (checkoutError) {
             console.error(
                 "Checkout error:",
-                checkoutError.response?.data || checkoutError
+                checkoutError.response?.data || checkoutError,
             );
 
             setError(
                 checkoutError.response?.data?.message ||
-                "Unable to start checkout. Please try again."
+                "Unable to start checkout. Please try again.",
             );
 
             setProcessing(false);
         }
     };
 
-    // Wait for the initial cart request to finish
     if (cartLoading) {
         return (
             <div className="checkout-page">
@@ -273,7 +250,6 @@ const Checkout = () => {
         );
     }
 
-    // Checkout requires at least one cart item
     if (cartItems.length === 0) {
         return <Navigate to="/cart" replace />;
     }
@@ -283,10 +259,7 @@ const Checkout = () => {
             <h1>Checkout</h1>
 
             <div className="checkout-container">
-                <form
-                    className="checkout-form"
-                    onSubmit={handleSubmit}
-                >
+                <form className="checkout-form" onSubmit={handleSubmit}>
                     <h2>Shipping Details</h2>
 
                     {error && (
@@ -361,10 +334,7 @@ const Checkout = () => {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={processing}
-                    >
+                    <button type="submit" disabled={processing}>
                         {processing ? "Processing..." : "Pay Now"}
                     </button>
                 </form>

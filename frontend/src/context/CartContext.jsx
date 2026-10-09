@@ -15,21 +15,16 @@ export function CartProvider({ children }) {
             const response = await api.get("/cart");
 
             setCartItems(response.data.cart || []);
-
         } catch (err) {
             if (err.response?.status === 401) {
                 setCartItems([]);
                 return;
             }
 
-            setError(
-                err.response?.data?.message ||
-                "Unable to load cart."
-            );
+            setError(err.response?.data?.message || "Unable to load cart.");
         }
     };
 
-    // Initial cart load
     useEffect(() => {
         const loadCart = async () => {
             setLoading(true);
@@ -46,7 +41,6 @@ export function CartProvider({ children }) {
         try {
             const response = await api.post(`/cart/${productId}`);
 
-            // Fetch populated cart data
             await refreshCart();
 
             return response.data;
@@ -57,16 +51,11 @@ export function CartProvider({ children }) {
 
     const removeFromCart = async (productId) => {
         try {
-            const response = await api.delete(
-                `/cart/${productId}`
-            );
+            const response = await api.delete(`/cart/${productId}`);
 
-            // The backend returns the updated cart
-            // without populated products.
             await refreshCart();
 
             return response.data;
-
         } catch (err) {
             throw err;
         }
@@ -75,28 +64,23 @@ export function CartProvider({ children }) {
     const updateQuantity = async (productId, quantity) => {
         const previousItems = [...cartItems];
 
-        // Update the UI immediately
         setCartItems((currentItems) =>
             currentItems.map((item) =>
                 String(item.product._id) === String(productId)
                     ? { ...item, quantity }
-                    : item
-            )
+                    : item,
+            ),
         );
 
         try {
             await api.patch(`/cart/${productId}`, { quantity });
         } catch (err) {
-            // Restore the previous state if the update fails
             setCartItems(previousItems);
             throw err;
         }
     };
 
-    const cartCount = cartItems.reduce(
-        (total, item) => total + item.quantity,
-        0
-    );
+    const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     return (
         <CartContext.Provider
@@ -108,7 +92,7 @@ export function CartProvider({ children }) {
                 refreshCart,
                 addToCart,
                 removeFromCart,
-                updateQuantity
+                updateQuantity,
             }}
         >
             {children}

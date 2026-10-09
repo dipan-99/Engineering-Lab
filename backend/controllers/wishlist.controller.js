@@ -6,85 +6,74 @@ export const addToWishlist = async (req, res) => {
     try {
         const { productId } = req.params;
 
-        // 1. Validate product ID
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(400).json({
-                message: "Invalid product ID"
+                message: "Invalid product ID",
             });
         }
 
-        // 2. Find product
         const product = await Product.findById(productId);
 
         if (!product) {
             return res.status(404).json({
-                message: "Product not found"
+                message: "Product not found",
             });
         }
 
-        // 3. Get authenticated customer
         const customer = await Customer.findById(req.user._id);
 
         if (!customer) {
             return res.status(401).json({
-                message: "Unauthorized"
+                message: "Unauthorized",
             });
         }
 
-        // 4. Check for duplicate
         if (customer.wishlist.includes(productId)) {
             return res.status(409).json({
-                message: "Product already in wishlist"
+                message: "Product already in wishlist",
             });
         }
 
-        // 5. Add product
         customer.wishlist.push(productId);
 
-        // 6. Save customer
         await customer.save();
 
-        // 7. Return success
         return res.status(200).json({
             success: true,
-            message: "Product added to wishlist"
+            message: "Product added to wishlist",
         });
-
     } catch (error) {
         console.error(error);
 
         return res.status(500).json({
-            message: "Internal Server Error"
+            message: "Internal Server Error",
         });
     }
 };
 
 export const getWishlist = async (req, res) => {
     try {
-        // Find authenticated customer and populate wishlist products
-        const customer = await Customer.findById(req.user._id)
-            .populate({
-                path: "wishlist",
-                select: "name price category image stock"
-            });
+        const customer = await Customer.findById(req.user._id).populate({
+            path: "wishlist",
+            select: "name price category image stock",
+        });
 
         if (!customer) {
             return res.status(401).json({
-                message: "Unauthorized"
+                message: "Unauthorized",
             });
         }
 
         return res.status(200).json({
             success: true,
             count: customer.wishlist.length,
-            wishlist: customer.wishlist
+            wishlist: customer.wishlist,
         });
-
     } catch (error) {
         console.error(error);
 
         return res.status(500).json({
-            message: "Internal Server Error"
+            message: "Internal Server Error",
         });
     }
 };
@@ -93,50 +82,43 @@ export const removeFromWishlist = async (req, res) => {
     try {
         const { productId } = req.params;
 
-        // 1. Validate product ID
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(400).json({
-                message: "Invalid product ID"
+                message: "Invalid product ID",
             });
         }
 
-        // 2. Find authenticated customer
         const customer = await Customer.findById(req.user._id);
 
         if (!customer) {
             return res.status(401).json({
-                message: "Unauthorized"
+                message: "Unauthorized",
             });
         }
 
-        // 3. Check if product exists in wishlist
         const wishlistIndex = customer.wishlist.findIndex(
-            (id) => id.toString() === productId
+            (id) => id.toString() === productId,
         );
 
         if (wishlistIndex === -1) {
             return res.status(404).json({
-                message: "Product not found in wishlist"
+                message: "Product not found in wishlist",
             });
         }
 
-        // 4. Remove product from wishlist
         customer.wishlist.splice(wishlistIndex, 1);
 
-        // 5. Save customer
         await customer.save();
 
-        // 6. Return success
         return res.status(200).json({
             success: true,
-            message: "Product removed from wishlist"
+            message: "Product removed from wishlist",
         });
-
     } catch (error) {
         console.error(error);
 
         return res.status(500).json({
-            message: "Internal Server Error"
+            message: "Internal Server Error",
         });
     }
 };

@@ -749,11 +749,6 @@
     color: #111;
 }
 
-
-/* =========================================================
-   COMMON ORDER BUTTONS
-========================================================= */
-
 .primary-btn,
 .secondary-btn {
     display: inline-block;
@@ -783,11 +778,6 @@
 .secondary-btn:hover {
     background: #f3f4f6;
 }
-
-
-/* =========================================================
-   ORDERS LOADING / EMPTY / ERROR
-========================================================= */
 
 .orders-state {
     background: white;
@@ -831,11 +821,6 @@
     }
 }
 
-
-/* =========================================================
-   ORDER DETAILS
-========================================================= */
-
 .order-details-page {
     min-height: calc(100vh - 70px);
     background: #f6f7fb;
@@ -847,7 +832,6 @@
     margin: 0 auto;
 }
 
-/* Scoped so it doesn't change your existing Product Details back link */
 .order-details-page .back-link {
     display: inline-block;
     color: #555;
@@ -1016,11 +1000,6 @@
     font-size: 13px;
 }
 
-
-/* =========================================================
-   ORDER SUCCESS
-========================================================= */
-
 .success-page {
     min-height: calc(100vh - 70px);
     background: #f6f7fb;
@@ -1122,13 +1101,7 @@
     background: #f3f4f6;
 }
 
-
-/* =========================================================
-   ORDER PAGES - RESPONSIVE
-========================================================= */
-
 @media (max-width: 750px) {
-
     .orders-header {
         flex-direction: column;
         align-items: flex-start;
@@ -1183,10 +1156,6 @@
     transform: translateX(-2px);
 }
 
-/* ============================= */
-/* ORDER SUCCESS PAGE */
-/* ============================= */
-
 .success-page {
     min-height: calc(100vh - 70px);
 
@@ -1214,9 +1183,6 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-
-/* Success Icon */
-
 .success-icon {
     width: 80px;
     height: 80px;
@@ -1237,9 +1203,6 @@
     font-weight: 700;
 }
 
-
-/* Heading */
-
 .success-card h1 {
     margin: 0 0 15px;
 
@@ -1247,9 +1210,6 @@
 
     color: #1f2937;
 }
-
-
-/* Message */
 
 .success-message {
     max-width: 450px;
@@ -1262,9 +1222,6 @@
 
     line-height: 1.6;
 }
-
-
-/* Order ID */
 
 .success-order-id {
     display: flex;
@@ -1301,9 +1258,6 @@
     word-break: break-all;
 }
 
-
-/* Buttons */
-
 .success-actions {
     display: flex;
 
@@ -1332,9 +1286,6 @@
     transition: all 0.2s ease;
 }
 
-
-/* View Orders */
-
 .success-primary {
     background: #2563eb;
 
@@ -1346,9 +1297,6 @@
 
     transform: translateY(-1px);
 }
-
-
-/* Continue Shopping */
 
 .success-secondary {
     background: white;
@@ -1364,13 +1312,7 @@
     transform: translateY(-1px);
 }
 
-
-/* ============================= */
-/* MOBILE */
-/* ============================= */
-
 @media (max-width: 600px) {
-
     .success-page {
         padding: 25px 15px;
     }
@@ -1399,8 +1341,6 @@
     }
 }
 
-/* Product Details Action Buttons */
-
 .product-details-actions {
     display: flex;
     align-items: center;
@@ -1420,7 +1360,9 @@
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .product-details-actions .add-to-cart:hover:not(:disabled) {
@@ -1448,7 +1390,9 @@
     font-size: 14px;
     font-weight: 600;
     box-sizing: border-box;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .details-cart-link:hover {
@@ -1468,7 +1412,6 @@
     overflow-wrap: anywhere;
 }
 
-/* Proceed to Checkout Button */
 .cart-summary .checkout-button {
     display: flex;
     align-items: center;
@@ -1491,7 +1434,8 @@
     text-decoration: none;
 
     cursor: pointer;
-    transition: background-color 0.2s ease,
+    transition:
+        background-color 0.2s ease,
         box-shadow 0.2s ease;
 }
 
@@ -1525,8 +1469,6 @@
     text-decoration: none;
     line-height: normal;
 }
-
-/* Product card quantity selector */
 
 .product-quantity-control {
     display: flex;
@@ -1576,8 +1518,6 @@
     color: #222;
 }
 
-/* Slightly larger product card cart controls */
-
 .product-info .cart-button,
 .product-info .product-quantity-control {
     width: 100%;
@@ -1587,7 +1527,6 @@
     margin-top: 10px;
 }
 
-/* Quantity selector */
 .product-info .product-quantity-control {
     display: flex;
     align-items: center;
@@ -1631,8 +1570,6 @@
     font-weight: 600;
 }
 
-/* Quantity selector and stock limit message */
-
 .product-quantity-wrapper {
     width: 100%;
     margin-top: 10px;
@@ -1664,10 +1601,6 @@
     opacity: 0.5;
 }
 
-/* ========================================
-   SHOPKART HOME PAGE
-======================================== */
-
 .shop-home {
     min-height: 100vh;
     background: #f8fafc;
@@ -1689,8 +1622,6 @@
     width: min(1240px, calc(100% - 48px));
     margin: 0 auto;
 }
-
-/* Loading */
 
 .home-loading,
 .shop-product-message {
@@ -1728,10 +1659,6 @@
         transform: rotate(360deg);
     }
 }
-
-/* ========================================
-   HERO
-======================================== */
 
 .shop-hero {
     position: relative;
@@ -1858,8 +1785,6 @@
     color: #159b70;
 }
 
-/* Hero decorative artwork */
-
 .shop-hero-art {
     position: relative;
     display: flex;
@@ -1973,10 +1898,6 @@
     color: #d99b00;
 }
 
-/* ========================================
-   BENEFITS
-======================================== */
-
 .shop-benefits {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2029,10 +1950,6 @@
     font-size: 11px;
 }
 
-/* ========================================
-   GENERAL SECTIONS
-======================================== */
-
 .shop-section {
     margin-top: 54px;
 }
@@ -2076,10 +1993,6 @@
 .shop-text-link:hover {
     color: #3f20a8;
 }
-
-/* ========================================
-   CATEGORY CARDS
-======================================== */
 
 .shop-category-grid {
     display: grid;
@@ -2171,10 +2084,6 @@
 .shop-category-card:hover .shop-category-arrow {
     transform: translate(3px, -3px);
 }
-
-/* ========================================
-   PRODUCT GRID
-======================================== */
 
 .shop-product-grid {
     display: grid;
@@ -2340,10 +2249,6 @@
     margin-top: 8px;
 }
 
-/* ========================================
-   ACCOUNT BANNER
-======================================== */
-
 .shop-account-banner {
     display: grid;
     grid-template-columns: 0.95fr 1.05fr;
@@ -2430,10 +2335,6 @@
     font-size: 18px;
 }
 
-/* ========================================
-   FOOTER
-======================================== */
-
 .shop-home-footer {
     display: flex;
     flex-wrap: wrap;
@@ -2478,10 +2379,6 @@
     font-weight: 750;
 }
 
-/* ========================================
-   RESPONSIVE: TABLET
-======================================== */
-
 @media (max-width: 1000px) {
     .shop-hero {
         grid-template-columns: 1.2fr 0.8fr;
@@ -2506,10 +2403,6 @@
         gap: 25px;
     }
 }
-
-/* ========================================
-   RESPONSIVE: MOBILE
-======================================== */
 
 @media (max-width: 640px) {
     .shop-home-container {
@@ -2753,7 +2646,6 @@
     }
 }
 
-/* Profile button */
 .shop-navbar-account {
     position: relative;
     flex-shrink: 0;
@@ -2817,7 +2709,6 @@
     margin-left: 4px;
 }
 
-/* Dropdown menu */
 .shop-navbar-dropdown {
     position: absolute;
     top: calc(100% + 12px);
@@ -2927,4 +2818,3 @@
         width: min(280px, calc(100vw - 24px));
     }
 }
-

@@ -18,14 +18,10 @@ const OrderDetails = () => {
                 const response = await api.get(`/orders/${id}`);
 
                 setOrder(response.data.order);
-
             } catch (error) {
                 console.error("Failed to fetch order:", error);
 
-                setError(
-                    error.response?.data?.message ||
-                    "Failed to load order"
-                );
+                setError(error.response?.data?.message || "Failed to load order");
             } finally {
                 setLoading(false);
             }
@@ -55,10 +51,7 @@ const OrderDetails = () => {
                         <h2>Something went wrong</h2>
                         <p>{error}</p>
 
-                        <Link
-                            to="/orders"
-                            className="primary-btn"
-                        >
+                        <Link to="/orders" className="primary-btn">
                             Back to My Orders
                         </Link>
                     </div>
@@ -74,10 +67,7 @@ const OrderDetails = () => {
                     <div className="orders-state">
                         <h2>Order Not Found</h2>
 
-                        <Link
-                            to="/orders"
-                            className="primary-btn"
-                        >
+                        <Link to="/orders" className="primary-btn">
                             Back to My Orders
                         </Link>
                     </div>
@@ -89,238 +79,101 @@ const OrderDetails = () => {
     return (
         <div className="order-details-page">
             <div className="order-details-container">
-
-                {/* Back Button */}
-                <Link
-                    to="/orders"
-                    className="order-details-back-link"
-                >
+                <Link to="/orders" className="order-details-back-link">
                     ← Back to My Orders
                 </Link>
 
-
-                {/* Header */}
                 <div className="details-header">
-
                     <div>
-                        <p className="details-label">
-                            ORDER DETAILS
-                        </p>
+                        <p className="details-label">ORDER DETAILS</p>
 
-                        <h1>
-                            #{order._id}
-                        </h1>
+                        <h1>#{order._id}</h1>
 
-                        <p>
-                            Placed on{" "}
-                            {new Date(
-                                order.createdAt
-                            ).toLocaleString()}
-                        </p>
+                        <p>Placed on {new Date(order.createdAt).toLocaleString()}</p>
                     </div>
 
-
-                    {/* Status */}
                     <div className="details-status">
-
                         <span
-                            className={`big-status ${order.status === "PLACED"
-                                    ? "status-success"
-                                    : "status-pending"
+                            className={`big-status ${order.status === "PLACED" ? "status-success" : "status-pending"
                                 }`}
                         >
                             {order.status}
                         </span>
 
                         <span
-                            className={`big-payment ${order.paymentStatus === "PAID"
-                                    ? "paid"
-                                    : "pending"
+                            className={`big-payment ${order.paymentStatus === "PAID" ? "paid" : "pending"
                                 }`}
                         >
                             Payment: {order.paymentStatus}
                         </span>
-
                     </div>
-
                 </div>
 
-
-                {/* Main Content */}
                 <div className="details-grid">
-
-                    {/* Left Side */}
                     <div className="details-main">
-
                         <div className="details-card">
-
-                            <h2>
-                                Items Ordered
-                            </h2>
-
+                            <h2>Items Ordered</h2>
 
                             {order.items.map((item, index) => (
+                                <div className="details-item" key={index}>
+                                    {item.image && <img src={item.image} alt={item.name} />}
 
-                                <div
-                                    className="details-item"
-                                    key={index}
-                                >
-
-                                    {/* Product Image */}
-                                    {item.image && (
-                                        <img
-                                            src={item.image}
-                                            alt={item.name}
-                                        />
-                                    )}
-
-
-                                    {/* Product Info */}
                                     <div className="details-item-info">
-
-                                        <h3>
-                                            {item.name}
-                                        </h3>
+                                        <h3>{item.name}</h3>
 
                                         <p>
-                                            ₹{item.price} ×{" "}
-                                            {item.quantity}
+                                            ₹{item.price} × {item.quantity}
                                         </p>
-
                                     </div>
 
-
-                                    {/* Item Total */}
-                                    <strong>
-                                        ₹
-                                        {item.price *
-                                            item.quantity}
-                                    </strong>
-
+                                    <strong>₹{item.price * item.quantity}</strong>
                                 </div>
-
                             ))}
 
-
-                            {/* Total */}
                             <div className="details-total">
+                                <span>Total</span>
 
-                                <span>
-                                    Total
-                                </span>
-
-                                <strong>
-                                    ₹{order.totalAmount}
-                                </strong>
-
+                                <strong>₹{order.totalAmount}</strong>
                             </div>
-
                         </div>
-
                     </div>
 
-
-                    {/* Right Side */}
                     <div className="details-sidebar">
-
-
-                        {/* Shipping Address */}
                         <div className="details-card">
-
-                            <h2>
-                                Shipping Address
-                            </h2>
+                            <h2>Shipping Address</h2>
 
                             <div className="address">
+                                <strong>{order.shippingAddress.fullName}</strong>
 
-                                <strong>
-                                    {
-                                        order
-                                            .shippingAddress
-                                            .fullName
-                                    }
-                                </strong>
+                                <p>{order.shippingAddress.phone}</p>
+
+                                <p>{order.shippingAddress.addressLine1}</p>
 
                                 <p>
-                                    {
-                                        order
-                                            .shippingAddress
-                                            .phone
-                                    }
+                                    {order.shippingAddress.city}, {order.shippingAddress.state}
                                 </p>
 
-                                <p>
-                                    {
-                                        order
-                                            .shippingAddress
-                                            .addressLine1
-                                    }
-                                </p>
-
-                                <p>
-                                    {
-                                        order
-                                            .shippingAddress
-                                            .city
-                                    }
-                                    ,{" "}
-                                    {
-                                        order
-                                            .shippingAddress
-                                            .state
-                                    }
-                                </p>
-
-                                <p>
-                                    {
-                                        order
-                                            .shippingAddress
-                                            .pincode
-                                    }
-                                </p>
-
+                                <p>{order.shippingAddress.pincode}</p>
                             </div>
-
                         </div>
 
-
-                        {/* Payment Information */}
                         <div className="details-card">
-
-                            <h2>
-                                Payment
-                            </h2>
+                            <h2>Payment</h2>
 
                             <div className="payment-row">
+                                <span>Payment Status</span>
 
-                                <span>
-                                    Payment Status
-                                </span>
-
-                                <strong>
-                                    {order.paymentStatus}
-                                </strong>
-
+                                <strong>{order.paymentStatus}</strong>
                             </div>
 
                             <div className="payment-row">
+                                <span>Order Status</span>
 
-                                <span>
-                                    Order Status
-                                </span>
-
-                                <strong>
-                                    {order.status}
-                                </strong>
-
+                                <strong>{order.status}</strong>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
         </div>
     );

@@ -37,7 +37,6 @@ function Home() {
             try {
                 const response = await api.get("/products");
 
-                // Supports either an array response or a { products: [...] } response.
                 const data = response.data;
                 const productList = Array.isArray(data)
                     ? data
@@ -87,10 +86,7 @@ function Home() {
 
     return (
         <div className="shop-home">
-            {/* <Navbar customer={customer} /> */}
-
             <main className="shop-home-container">
-                {/* Hero */}
                 <section className="shop-hero">
                     <div className="shop-hero-content">
                         <span className="shop-eyebrow">
@@ -151,7 +147,6 @@ function Home() {
                     </div>
                 </section>
 
-                {/* Benefits strip */}
                 <section className="shop-benefits" aria-label="Shopping benefits">
                     <div className="shop-benefit">
                         <span className="benefit-icon">🛒</span>
@@ -178,7 +173,6 @@ function Home() {
                     </div>
                 </section>
 
-                {/* Featured products */}
                 <section className="shop-section">
                     <div className="shop-section-heading">
                         <div>
@@ -218,10 +212,7 @@ function Home() {
                     ) : (
                         <div className="shop-product-grid">
                             {products.map((product) => (
-                                <article
-                                    className="shop-product-card"
-                                    key={product._id}
-                                >
+                                <article className="shop-product-card" key={product._id}>
                                     <Link
                                         to={`/ products / ${product._id} `}
                                         className="shop-product-image-link"
@@ -249,9 +240,7 @@ function Home() {
                                             <small>ShopKart find</small>
                                         </div>
 
-                                        <span className="shop-product-image-label">
-                                            Discover
-                                        </span>
+                                        <span className="shop-product-image-label">Discover</span>
                                     </Link>
 
                                     <div className="shop-product-info">
@@ -281,7 +270,6 @@ function Home() {
                     )}
                 </section>
 
-                {/* Account shortcuts */}
                 <section className="shop-account-banner">
                     <div className="shop-account-copy">
                         <span className="shop-section-kicker">YOUR SHOPKART</span>
@@ -322,7 +310,6 @@ function Home() {
                     </div>
                 </section>
 
-                {/* Footer */}
                 <footer className="shop-home-footer">
                     <Link to="/home" className="shop-footer-brand">
                         <span className="shop-footer-logo">SK</span>

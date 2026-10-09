@@ -2,13 +2,8 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 function Cart() {
-    const {
-        cartItems,
-        loading,
-        error,
-        removeFromCart,
-        updateQuantity
-    } = useCart();
+    const { cartItems, loading, error, removeFromCart, updateQuantity } =
+        useCart();
 
     if (loading) {
         return (
@@ -34,14 +29,9 @@ function Cart() {
 
                     <h1>Your cart is empty</h1>
 
-                    <p>
-                        Looks like you haven't added anything yet.
-                    </p>
+                    <p>Looks like you haven't added anything yet.</p>
 
-                    <Link
-                        to="/products"
-                        className="browse-products-button"
-                    >
+                    <Link to="/products" className="browse-products-button">
                         Browse Products
                     </Link>
                 </div>
@@ -49,17 +39,14 @@ function Cart() {
         );
     }
 
-    // Total number of units
     const totalItems = cartItems.reduce(
         (total, item) => total + item.quantity,
-        0
+        0,
     );
 
-    // Calculate subtotal from current cart state
     const subtotal = cartItems.reduce(
-        (total, item) =>
-            total + item.product.price * item.quantity,
-        0
+        (total, item) => total + item.product.price * item.quantity,
+        0,
     );
 
     const handleIncrease = async (item) => {
@@ -68,10 +55,7 @@ function Cart() {
         }
 
         try {
-            await updateQuantity(
-                item.product._id,
-                item.quantity + 1
-            );
+            await updateQuantity(item.product._id, item.quantity + 1);
         } catch (error) {
             console.error(error);
         }
@@ -84,10 +68,7 @@ function Cart() {
                 return;
             }
 
-            await updateQuantity(
-                item.product._id,
-                item.quantity - 1
-            );
+            await updateQuantity(item.product._id, item.quantity - 1);
         } catch (error) {
             console.error(error);
         }
@@ -106,15 +87,9 @@ function Cart() {
             <h1>My Cart</h1>
 
             <div className="cart-layout">
-
-                {/* Cart Items */}
                 <div className="cart-items">
-
                     {cartItems.map((item) => (
-                        <div
-                            className="cart-item"
-                            key={item.product._id}
-                        >
+                        <div className="cart-item" key={item.product._id}>
                             <img
                                 className="cart-item-image"
                                 src={item.product.image}
@@ -122,75 +97,41 @@ function Cart() {
                             />
 
                             <div className="cart-item-info">
+                                <h2>{item.product.name}</h2>
 
-                                <h2>
-                                    {item.product.name}
-                                </h2>
+                                <p className="cart-item-price">₹{item.product.price}</p>
 
-                                <p className="cart-item-price">
-                                    ₹{item.product.price}
-                                </p>
-
-                                <p>
-                                    Stock: {item.product.stock}
-                                </p>
+                                <p>Stock: {item.product.stock}</p>
 
                                 <div className="quantity-controls">
+                                    <button onClick={() => handleDecrease(item)}>−</button>
+
+                                    <span>{item.quantity}</span>
 
                                     <button
-                                        onClick={() =>
-                                            handleDecrease(item)
-                                        }
-                                    >
-                                        −
-                                    </button>
-
-                                    <span>
-                                        {item.quantity}
-                                    </span>
-
-                                    <button
-                                        onClick={() =>
-                                            handleIncrease(item)
-                                        }
-                                        disabled={
-                                            item.quantity >=
-                                            item.product.stock
-                                        }
+                                        onClick={() => handleIncrease(item)}
+                                        disabled={item.quantity >= item.product.stock}
                                     >
                                         +
                                     </button>
-
                                 </div>
 
                                 <button
                                     className="remove-cart-button"
-                                    onClick={() =>
-                                        handleRemove(
-                                            item.product._id
-                                        )
-                                    }
+                                    onClick={() => handleRemove(item.product._id)}
                                 >
                                     Remove
                                 </button>
-
                             </div>
 
                             <div className="cart-item-total">
-                                ₹
-                                {(
-                                    item.product.price *
-                                    item.quantity
-                                ).toFixed(2)}
+                                ₹{(item.product.price * item.quantity).toFixed(2)}
                             </div>
                         </div>
                     ))}
-
                 </div>
 
-                {/* Order Summary */}
                 <div className="cart-summary">
-
                     <h2>Order Summary</h2>
 
                     <div className="cart-summary-row">
@@ -200,20 +141,13 @@ function Cart() {
 
                     <div className="cart-summary-row cart-subtotal">
                         <span>Subtotal</span>
-                        <span>
-                            ₹{subtotal.toFixed(2)}
-                        </span>
+                        <span>₹{subtotal.toFixed(2)}</span>
                     </div>
 
-                    <Link
-                        to="/checkout"
-                        className="checkout-button"
-                    >
+                    <Link to="/checkout" className="checkout-button">
                         Proceed to Checkout
                     </Link>
-
                 </div>
-
             </div>
         </div>
     );
