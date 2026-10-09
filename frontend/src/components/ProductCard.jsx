@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
+import api from "../services/api";
 
 function ProductCard({
     product,
@@ -21,7 +22,7 @@ function ProductCard({
         removeFromCart
     } = useCart();
 
-    const { addToWishlist } = useWishlist();
+    const { addToWishlist, removeFromWishlist } = useWishlist();
 
     // Find this product in the shared cart
     const cartItem = cartItems.find(
@@ -30,19 +31,26 @@ function ProductCard({
 
     const quantity = cartItem?.quantity || 0;
 
-    const handleAddToWishlist = async () => {
+    const handleWishlistToggle = async () => {
         try {
             setSaving(true);
             setMessage("");
 
-            await addToWishlist(product._id);
-            onWishlistChange(product._id);
+            if (isWishlisted) {
+                await removeFromWishlist(product._id);
+                setMessage("♥ Removed from Wishlist");
+            } else {
+                await addToWishlist(product._id);
+                setMessage("♥ Added to Wishlist");
+            }
 
-            setMessage("♥ Added to Wishlist");
+            onWishlistChange(product._id);
         } catch (error) {
+            console.error("Wishlist update failed:", error);
+
             setMessage(
                 error.response?.data?.message ||
-                "Unable to save product. Please try again."
+                "Unable to update wishlist. Please try again."
             );
         } finally {
             setSaving(false);
@@ -117,18 +125,18 @@ function ProductCard({
                 {/* Wishlist */}
                 <button
                     className="wishlist-button"
-                    onClick={handleAddToWishlist}
-                    disabled={saving || isWishlisted}
+                    onClick={handleWishlistToggle}
+                    disabled={saving}
                 >
-                    {isWishlisted
-                        ? "♥ Already in Wishlist"
-                        : saving
-                            ? "⏳ Saving..."
+                    {saving
+                        ? "⏳ Updating..."
+                        : isWishlisted
+                            ? "♥ Remove from Wishlist"
                             : "♡ Add to Wishlist"}
                 </button>
 
-                {message && !isWishlisted && (
-                    <p className="wishlist-message">
+                {message && (
+                    <p className="wishlist-message" role="status">
                         {message}
                     </p>
                 )}

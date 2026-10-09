@@ -86,8 +86,13 @@ function Products() {
     const handleWishlistChange = (productId) => {
         setWishlistIds((currentIds) => {
             const updatedIds = new Set(currentIds);
+            const id = String(productId);
 
-            updatedIds.add(String(productId));
+            if (updatedIds.has(id)) {
+                updatedIds.delete(id);
+            } else {
+                updatedIds.add(id);
+            }
 
             return updatedIds;
         });
