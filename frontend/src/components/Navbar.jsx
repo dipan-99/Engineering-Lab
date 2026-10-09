@@ -1,49 +1,42 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import api from "../services/api";
 import { useWishlist } from "../context/WishlistContext";
+import { useCustomer } from "../context/CustomerContext";
 
 function Navbar() {
     const navigate = useNavigate();
 
     const { wishlistCount } = useWishlist();
     const { cartCount } = useCart();
+    const { customer, setCustomer } = useCustomer();
 
-    const [customer, setCustomer] = useState(null);
     const [profileOpen, setProfileOpen] = useState(false);
 
+    // Logout
     const handleLogout = async () => {
         try {
             await api.post("/customers/logout");
         } catch (error) {
             console.error("Logout failed:", error);
         } finally {
+            setCustomer(null);
+            setProfileOpen(false);
             navigate("/login", { replace: true });
         }
     };
 
+    // Customer initials
     const initials = customer?.fullName
         ? customer.fullName
-            .split(" ")
-            .map((n) => n[0])
+            .trim()
+            .split(/\s+/)
+            .map((part) => part[0])
             .join("")
             .toUpperCase()
             .slice(0, 2)
         : "SK";
-
-    useEffect(() => {
-        const fetchCustomer = async () => {
-            try {
-                const response = await api.get("/customers/me");
-                setCustomer(response.data.customer ?? response.data);
-            } catch (error) {
-                console.error("Failed to fetch customer profile:", error);
-            }
-        };
-
-        fetchCustomer();
-    }, []);
 
     return (
         <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
@@ -66,6 +59,7 @@ function Navbar() {
                 {/* Navigation */}
                 <div className="flex items-center gap-2 sm:gap-3">
 
+                    {/* Home */}
                     <button
                         onClick={() => navigate("/home")}
                         className="hidden cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-indigo-50 hover:text-indigo-600 sm:inline-flex"
@@ -73,6 +67,7 @@ function Navbar() {
                         🏠 Home
                     </button>
 
+                    {/* Products */}
                     <button
                         onClick={() => navigate("/products")}
                         className="hidden cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-indigo-50 hover:text-indigo-600 sm:inline-flex"
@@ -80,6 +75,7 @@ function Navbar() {
                         🛍️ Products
                     </button>
 
+                    {/* Wishlist */}
                     <button
                         onClick={() => navigate("/wishlist")}
                         className="hidden cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-pink-50 hover:text-pink-600 sm:inline-flex"
@@ -87,6 +83,7 @@ function Navbar() {
                         ❤️ Wishlist ({wishlistCount})
                     </button>
 
+                    {/* Cart */}
                     <button
                         onClick={() => navigate("/cart")}
                         className="hidden cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-green-50 hover:text-green-600 sm:inline-flex"
@@ -97,7 +94,9 @@ function Navbar() {
                     {/* Profile dropdown */}
                     <div className="relative">
                         <button
-                            onClick={() => setProfileOpen((prev) => !prev)}
+                            onClick={() =>
+                                setProfileOpen((prev) => !prev)
+                            }
                             aria-expanded={profileOpen}
                             aria-label="Toggle profile menu"
                             className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white p-1.5 pr-3 shadow-sm transition-all hover:border-indigo-300 hover:bg-indigo-50"
@@ -112,6 +111,7 @@ function Navbar() {
                                 <p className="max-w-28 truncate text-sm font-semibold text-slate-800">
                                     {customer?.fullName || "My Account"}
                                 </p>
+
                                 <p className="text-xs text-slate-500">
                                     My Profile
                                 </p>
@@ -119,7 +119,7 @@ function Navbar() {
 
                             {/* Dropdown arrow */}
                             <svg
-                                className={`h-4 w-4 text-slate-500 transition-transform ${profileOpen ? "rotate-180" : ""
+                                className={`h-3 w-3 shrink-0 text-slate-500 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""
                                     }`}
                                 fill="none"
                                 stroke="currentColor"
@@ -154,10 +154,13 @@ function Navbar() {
 
                                         <div className="min-w-0">
                                             <p className="truncate text-sm font-bold text-slate-900">
-                                                {customer?.fullName || "My Account"}
+                                                {customer?.fullName ||
+                                                    "My Account"}
                                             </p>
+
                                             <p className="truncate text-xs text-slate-500">
-                                                {customer?.email || "Manage your account"}
+                                                {customer?.email ||
+                                                    "Manage your account"}
                                             </p>
                                         </div>
                                     </div>

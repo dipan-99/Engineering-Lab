@@ -133,3 +133,83 @@ export const changePassword = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
+export const updateCustomerProfile = async (req, res) => {
+    try {
+        const { fullName, email, phone } = req.body;
+
+        if (
+            typeof fullName !== "string" ||
+            typeof email !== "string" ||
+            typeof phone !== "string" ||
+            !fullName.trim() ||
+            !email.trim() ||
+            !phone.trim()
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Full name, email, and phone are required"
+            });
+        }
+
+        const normalizedName = fullName.trim();
+        const normalizedEmail = email.trim().toLowerCase();
+        const normalizedPhone = phone.trim();
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(normalizedEmail)) {
+            return res.status(400).json({
+                success: false,
+                message: "Please enter a valid email address"
+            });
+        }
+
+        // Find the logged-in customer
+        const customer = await Customer.findById(req.user._id);
+
+        if (!customer) {
+            return res.status(404).json({
+                success: false,
+                message: "Customer not found"
+            });
+        }
+
+        // Prevent another customer from using this email
+        const existingCustomer = await Customer.findOne({
+            email: normalizedEmail,
+            _id: { $ne: customer._id }
+        });
+
+        if (existingCustomer) {
+            return res.status(409).json({
+                success: false,
+                message: "Email is already registered to another account"
+            });
+        }
+
+        customer.fullName = normalizedName;
+        customer.email = normalizedEmail;
+        customer.phone = normalizedPhone;
+
+        await customer.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            customer: {
+                _id: customer._id,
+                fullName: customer.fullName,
+                email: customer.email,
+                phone: customer.phone
+            }
+        });
+    } catch (error) {
+        console.error("Update profile error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to update profile"
+        });
+    }
+};

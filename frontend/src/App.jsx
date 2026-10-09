@@ -20,6 +20,8 @@ import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Orders from "./pages/Orders";
 import OrderDetails from "./pages/OrderDetails";
+import Profile from "./pages/Profile";
+import { CustomerProvider } from "./context/CustomerContext";
 
 function AppLayout() {
     const location = useLocation();
@@ -52,6 +54,7 @@ function AppLayout() {
                 />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/orders/:id" element={<OrderDetails />} />
+                <Route path="/profile" element={<Profile />} />
             </Routes>
         </>
     );
@@ -59,9 +62,11 @@ function AppLayout() {
 
 function App() {
     return (
-        <BrowserRouter>
-            <AppLayout />
-        </BrowserRouter>
+        <CustomerProvider>
+            <BrowserRouter>
+                <AppLayout />
+            </BrowserRouter>
+        </CustomerProvider>
     );
 }
 
