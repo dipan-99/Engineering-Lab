@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import api from "../services/api";
 
 function ProductCard({
     product,
@@ -12,7 +11,6 @@ function ProductCard({
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
     const [addingToCart, setAddingToCart] = useState(false);
-    const [updatingQuantity, setUpdatingQuantity] = useState(false);
     const [cartMessage, setCartMessage] = useState("");
 
     const {
@@ -26,11 +24,13 @@ function ProductCard({
 
     // Find this product in the shared cart
     const cartItem = cartItems.find(
-        (item) => String(item.product?._id) === String(product._id)
+        (item) =>
+            String(item.product?._id) === String(product._id)
     );
 
     const quantity = cartItem?.quantity || 0;
 
+    // Toggle wishlist
     const handleWishlistToggle = async () => {
         try {
             setSaving(true);
@@ -57,6 +57,7 @@ function ProductCard({
         }
     };
 
+    // Add product to cart
     const handleAddToCart = async () => {
         try {
             setAddingToCart(true);
@@ -74,26 +75,33 @@ function ProductCard({
         }
     };
 
+    // Update cart quantity
     const handleQuantityChange = async (newQuantity) => {
-        if (!cartItem || updatingQuantity) return;
+        if (!cartItem) return;
+
+        // Do not exceed available stock
+        if (newQuantity > product.stock) {
+            setCartMessage("No more stock available");
+            return;
+        }
 
         try {
-            setUpdatingQuantity(true);
             setCartMessage("");
 
             if (newQuantity <= 0) {
                 await removeFromCart(product._id);
                 setCartMessage("Product removed from cart");
             } else {
+                // CartContext updates the displayed quantity optimistically
                 await updateQuantity(product._id, newQuantity);
             }
         } catch (error) {
+            console.error("Quantity update failed:", error);
+
             setCartMessage(
                 error.response?.data?.message ||
                 "Unable to update cart quantity."
             );
-        } finally {
-            setUpdatingQuantity(false);
         }
     };
 
@@ -135,18 +143,14 @@ function ProductCard({
                             : "♡ Add to Wishlist"}
                 </button>
 
-                {message && (
-                    <p className="wishlist-message" role="status">
-                        {message}
-                    </p>
-                )}
-
                 {/* Cart */}
                 {quantity === 0 ? (
                     <button
                         className="cart-button"
                         onClick={handleAddToCart}
-                        disabled={addingToCart || product.stock <= 0}
+                        disabled={
+                            addingToCart || product.stock <= 0
+                        }
                     >
                         {product.stock <= 0
                             ? "Out of Stock"
@@ -159,9 +163,11 @@ function ProductCard({
                         <div className="product-quantity-control">
                             <button
                                 type="button"
-                                aria-label={`Decrease ${product.name} quantity`}
-                                onClick={() => handleQuantityChange(quantity - 1)}
-                                disabled={updatingQuantity}
+                                aria-label={`Decrease ${ product.name } quantity`}
+                                onClick={() =>
+                                    handleQuantityChange(quantity - 1)
+                                }
+                                disabled={quantity <= 0}
                             >
                                 −
                             </button>
@@ -172,12 +178,11 @@ function ProductCard({
 
                             <button
                                 type="button"
-                                aria-label={`Increase ${product.name} quantity`}
-                                onClick={() => handleQuantityChange(quantity + 1)}
-                                disabled={
-                                    updatingQuantity ||
-                                    quantity >= product.stock
+                                aria-label={`Increase ${ product.name } quantity`}
+                                onClick={() =>
+                                    handleQuantityChange(quantity + 1)
                                 }
+                                disabled={quantity >= product.stock}
                             >
                                 +
                             </button>

@@ -1654,3 +1654,12 @@
     text-align: center;
     line-height: 1.4;
 }
+
+.product-quantity-control button {
+    cursor: pointer;
+}
+
+.product-quantity-control button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
