@@ -1505,3 +1505,23 @@
     background: #1e40af;
 }
 
+.wishlist-card .wishlist-actions .view-details {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-width: 0;
+    height: 36px;
+    padding: 0 12px;
+    margin: 0;
+
+    box-sizing: border-box;
+    flex: none;
+    align-self: stretch;
+
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    line-height: normal;
+}
